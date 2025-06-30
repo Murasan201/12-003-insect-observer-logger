@@ -150,6 +150,7 @@ python detect_insect.py --input input_images/ --output output_images/
 
 ### Project Documentation
 - Keep README.md updated
+- **README.md must be written in English**
 - Document installation steps
 - Provide usage examples
 - Include troubleshooting guide
