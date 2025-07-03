@@ -1,5 +1,13 @@
 # Project Rules and Guidelines
 
+## Project Requirements
+
+### Requirements Specification
+- **Project requirements are defined in**: `insect_detection_training_project_requirements_spec.md`
+- **MUST review this document before starting any work**
+- Contains detailed functional and non-functional requirements
+- Provides context for all development decisions
+
 ## Project Structure
 
 ```
@@ -179,6 +187,9 @@ python detect_insect.py --input input_images/ --output output_images/
 - Local configuration files with sensitive data
 - `.mcp.json` and similar MCP configuration files
 - Any file containing `password`, `secret`, `key`, `token`
+- GitHub personal access tokens and authentication credentials
+- Email addresses used for GitHub authentication
+- Git configuration files containing personal information
 
 ### Security Best Practices
 - Review all files before committing with `git status` and `git diff`
