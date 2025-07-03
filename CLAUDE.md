@@ -138,8 +138,16 @@ python detect_insect.py --input input_images/ --output output_images/
 
 ### Git Workflow
 - Use meaningful commit messages
-- Don't commit large files (images, models)
+- Don't commit large files (images, models, datasets)
 - Keep repository clean and organized
+
+### Dataset Management
+- **NEVER commit dataset files to GitHub**
+- Datasets are excluded via .gitignore due to:
+  - Large file sizes (500+ images)
+  - License considerations (CC BY 4.0 attribution requirements)
+  - Repository efficiency (focus on code, not data)
+- Use external storage or download scripts for dataset distribution
 
 ### Ignored Files
 - Model weights (*.pt, *.pth)
@@ -147,6 +155,7 @@ python detect_insect.py --input input_images/ --output output_images/
 - Log files
 - Temporary files
 - Python cache files
+- **Dataset files (datasets/, *.jpg, *.png, *.txt, data.yaml)**
 
 ## Documentation
 

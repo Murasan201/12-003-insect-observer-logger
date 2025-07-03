@@ -172,6 +172,18 @@ logs/
 weights/
 models/
 
+# Dataset files (large files not suitable for Git)
+datasets/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+*.gif
+data.yaml
+dataset.yaml
+*.txt
+
 # Temporary files
 *.tmp
 *.temp

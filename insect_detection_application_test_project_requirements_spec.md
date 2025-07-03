@@ -132,43 +132,44 @@
 ## 10. Training Data Requirements
 
 ### 10.1 Dataset Specifications
+- **Dataset Source**: https://universe.roboflow.com/z-algae-bilby/beetle
+- **Total Dataset Size**: 500 images with YOLO format annotations
+- **Classes**: 1 class ('beetle' - general beetle detection)
 - **Primary Target**: Japanese rhinoceros beetles (Trypoxylus dichotomus)  
 - **Secondary Targets**: Other beetle species for robust training  
 - **Format**: YOLO format with bounding box annotations  
-- **Minimum Size**: 500+ annotated images for training  
-- **Image Quality**: High resolution (≥ 640x640 pixels recommended)  
+- **Image Quality**: High resolution (≥ 640x640 pixels recommended)
+- **License**: CC BY 4.0  
 
-### 10.2 Data Split
-- **Training Set**: 70% of total dataset  
-- **Validation Set**: 20% of total dataset  
-- **Test Set**: 10% of total dataset  
+### 10.2 Data Split (Actual Implementation)
+- **Training Set**: 400 images (80% of total dataset)
+- **Validation Set**: 50 images (10% of total dataset)  
+- **Test Set**: 50 images (10% of total dataset)  
 
-### 10.3 Directory Structure
+### 10.3 Directory Structure (Actual Implementation)
 ```
 insect-detection-training/
 ├── datasets/
-│   ├── raw/                    # Original unprocessed data
-│   │   ├── images/            # Collected images
-│   │   └── annotations/       # Original annotation files
-│   ├── processed/             # YOLO format converted data
-│   │   ├── images/
-│   │   │   ├── train/         # Training images
-│   │   │   ├── val/           # Validation images
-│   │   │   └── test/          # Test images
-│   │   └── labels/
-│   │       ├── train/         # Training labels (.txt)
-│   │       ├── val/           # Validation labels (.txt)
-│   │       └── test/          # Test labels (.txt)
-│   └── dataset.yaml           # YOLOv8 configuration file
+│   ├── train/
+│   │   ├── images/            # 400 training images
+│   │   └── labels/            # 400 training labels (.txt)
+│   ├── valid/
+│   │   ├── images/            # 50 validation images
+│   │   └── labels/            # 50 validation labels (.txt)
+│   ├── test/
+│   │   ├── images/            # 50 test images
+│   │   └── labels/            # 50 test labels (.txt)
+│   └── data.yaml              # YOLOv8 configuration file
 ├── weights/                   # Trained model weights
 └── training_results/          # Training logs and metrics
 ```
 
-### 10.4 File Format Requirements
-- **Images**: JPEG/PNG format, consistent naming convention
-- **Labels**: YOLO format (.txt files) with class_id, x_center, y_center, width, height (normalized coordinates)
-- **Configuration**: dataset.yaml file specifying paths and class names
-- **Naming**: Corresponding image and label files must have identical base names  
+### 10.4 File Format Requirements (Actual Implementation)
+- **Images**: JPEG format with Roboflow naming convention
+- **Labels**: YOLO format (.txt files) with class_id=0 for 'beetle', x_center, y_center, width, height (normalized coordinates)
+- **Configuration**: data.yaml file with relative paths and single class definition
+- **Naming**: Image and label files have matching base names with Roboflow hash identifiers
+- **Class Definition**: Single class 'beetle' with class_id=0  
 
 ---
 

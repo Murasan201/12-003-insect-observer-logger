@@ -1,6 +1,6 @@
-# Insect Detection CPU Test Project
+# Insect Detection Training Project
 
-A CPU-based insect detection application using YOLOv8 for detecting insects (e.g., beetles) in still images with result visualization.
+A YOLOv8-based insect detection training project for developing custom beetle detection models and CPU-optimized inference applications.
 
 ## 📋 Project Overview
 
@@ -31,8 +31,8 @@ This project evaluates the capability of a YOLO model to detect insects in still
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Murasan201/insect-detection-cpu-test.git
-cd insect-detection-cpu-test
+git clone https://github.com/Murasan201/insect-detection-training.git
+cd insect-detection-training
 ```
 
 ### 2. Create Virtual Environment
@@ -65,13 +65,15 @@ python detect_insect.py --input input_images/ --output output_images/
 
 ### Directory Structure
 ```
-insect-detection-cpu-test/
+insect-detection-training/
 ├── detect_insect.py          # Main detection script
 ├── requirements.txt          # Python dependencies
+├── datasets/                 # Training datasets (excluded from Git)
 ├── input_images/            # Input directory (create manually)
 ├── output_images/           # Output directory (auto-created)
 ├── logs/                    # Log files (auto-created)
-└── weights/                 # Model weights (auto-downloaded)
+├── weights/                 # Model weights (auto-downloaded)
+└── training_results/        # Training logs and metrics
 ```
 
 ## 📊 Performance Metrics
@@ -134,12 +136,48 @@ This project implements security best practices:
 - Environment variable usage for configuration
 - Regular security auditing guidelines
 
+## 📊 Dataset Information
+
+### Training Dataset
+This project uses the beetle detection dataset from Roboflow for custom YOLOv8 model training:
+
+- **Source**: [Roboflow Beetle Dataset](https://universe.roboflow.com/z-algae-bilby/beetle)
+- **Total Images**: 500 annotated images
+- **Classes**: 1 class ('beetle' - general beetle detection)
+- **Format**: YOLO format with bounding box annotations
+- **License**: CC BY 4.0
+- **Split**: 
+  - Training: 400 images (80%)
+  - Validation: 50 images (10%)
+  - Test: 50 images (10%)
+
+### Dataset Setup
+**Note**: Dataset files are excluded from Git due to large size and license considerations.
+
+1. **Download Dataset**: Access the Roboflow dataset link above
+2. **Extract to datasets/**: Place the downloaded files in the `datasets/` directory
+3. **Verify Structure**: Ensure the following structure:
+   ```
+   datasets/
+   ├── train/
+   │   ├── images/    # 400 training images
+   │   └── labels/    # 400 training labels
+   ├── valid/
+   │   ├── images/    # 50 validation images
+   │   └── labels/    # 50 validation labels
+   ├── test/
+   │   ├── images/    # 50 test images
+   │   └── labels/    # 50 test labels
+   └── data.yaml      # YOLOv8 configuration
+   ```
+
 ## 🚧 Current Status
 
-This is a test project designed to evaluate YOLOv8's insect detection capabilities on CPU hardware. The project is currently in development and testing phase.
+This is a training project designed to develop custom YOLOv8 models for insect detection and evaluate their capabilities on CPU hardware. The project is currently in development and testing phase.
 
 ### Future Enhancements
-- Custom insect-specific model training
+- Complete custom model training pipeline
+- Model performance evaluation and optimization
 - Raspberry Pi 5 deployment optimization
 - Real-time video processing support
 - Web interface for easier operation
