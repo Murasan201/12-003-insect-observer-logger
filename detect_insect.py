@@ -129,50 +129,54 @@ def detect_objects(
     Returns:
         (注釈付き画像、検出結果リスト、検出有無)のタプル
     """
-    # 画像を読み込み
+    # OpenCVを使用して画像ファイルを読み込み（BGR形式）
     image = cv2.imread(str(image_path))
     if image is None:
         raise ValueError(f"画像を読み込めません: {image_path}")
     
-    # CPUデバイスを明示的に指定して推論を実行
+    # YOLOv8モデルで推論を実行
+    # CPUデバイスを明示的に指定してGPUとの競合を回避
     results = model.predict(
-        source=image,                    # 入力画像
-        device='cpu',                    # CPUで推論を実行
-        conf=confidence_threshold,       # 信頼度闾値
-        verbose=False                    # 詳細ログを無効化
+        source=image,                    # 入力画像データ
+        device='cpu',                    # 推論実行デバイス（CPU専用）
+        conf=confidence_threshold,       # 信頼度閾値（この値以下は除外）
+        verbose=False                    # 推論中の詳細ログを抑制
     )
     
+    # 検出結果を格納するリストと検出フラグを初期化
     detections = []
     has_detections = False
     
-    # 結果を処理
+    # YOLOv8の推論結果を解析（通常は1つの結果オブジェクト）
     for result in results:
-        # 注釈付き画像を取得
+        # バウンディングボックスと信頼度を描画した注釈付き画像を生成
         annotated_image = result.plot()
         
-        # 検出情報を抽出
+        # 検出されたオブジェクトがあるかチェック
         if result.boxes is not None and len(result.boxes) > 0:
             has_detections = True
             
-            # バウンディングボックス、クラス、信頼度を取得
-            boxes = result.boxes.xyxy.cpu().numpy()        # バウンディングボックス座標
-            classes = result.boxes.cls.cpu().numpy()       # クラスID
-            confidences = result.boxes.conf.cpu().numpy()  # 信頼度
+            # 検出結果から各要素を抽出（GPUテンソルをCPU NumPy配列に変換）
+            boxes = result.boxes.xyxy.cpu().numpy()        # バウンディングボックス座標 [x1,y1,x2,y2]
+            classes = result.boxes.cls.cpu().numpy()       # 検出クラスのID番号
+            confidences = result.boxes.conf.cpu().numpy()  # 各検出の信頼度スコア
             
-            # 各検出結果を処理
+            # 検出された各オブジェクトについて情報を整理
             for box, cls, conf in zip(boxes, classes, confidences):
-                x1, y1, x2, y2 = map(int, box)  # 座標を整数に変換
-                class_name = model.names[int(cls)]  # クラス名を取得
+                # バウンディングボックス座標を整数値に変換（ピクセル単位）
+                x1, y1, x2, y2 = map(int, box)
+                # クラスIDから実際のクラス名を取得（例: 0 -> "beetle"）
+                class_name = model.names[int(cls)]
                 
-                # 検出情報を辞書として保存
+                # 検出情報を構造化して辞書に保存
                 detection = {
-                    'class': class_name,
-                    'confidence': float(conf),
-                    'bbox': [x1, y1, x2, y2]
+                    'class': class_name,           # 検出されたオブジェクトのクラス名
+                    'confidence': float(conf),     # 検出の信頼度（0.0～1.0）
+                    'bbox': [x1, y1, x2, y2]       # バウンディングボックス座標
                 }
                 detections.append(detection)
         else:
-            # 検出結果がない場合は元の画像を返す
+            # 何も検出されなかった場合は元の画像をそのまま使用
             annotated_image = image
     
     return annotated_image, detections, has_detections
@@ -184,21 +188,24 @@ def save_result_image(
     logger: logging.Logger
 ) -> bool:
     """
-    Save annotated image to output directory.
+    注釈付き画像を出力ディレクトリに保存します。
     
     Args:
-        annotated_image: Image with bounding boxes drawn
-        output_path: Output file path
-        logger: Logger instance
+        annotated_image: バウンディングボックスが描画された画像データ
+        output_path: 出力ファイルのパス
+        logger: ロガーインスタンス
         
     Returns:
-        True if save successful, False otherwise
+        保存が成功した場合True、失敗した場合False
     """
     try:
+        # OpenCVを使用して画像をPNG形式で保存
+        # cv2.imwriteは自動的にファイル拡張子から形式を判断
         cv2.imwrite(str(output_path), annotated_image)
         return True
     except Exception as e:
-        logger.error(f"Failed to save image {output_path}: {e}")
+        # ファイル保存エラーをログに記録
+        logger.error(f"画像の保存に失敗しました {output_path}: {e}")
         return False
 
 
@@ -211,22 +218,25 @@ def log_detection_result(
     logger: logging.Logger
 ) -> None:
     """
-    Log detection result to CSV file.
+    検出結果をCSVファイルにログ出力します。
     
     Args:
-        csv_path: Path to CSV log file
-        filename: Image filename
-        detected: Whether any objects were detected
-        count: Number of detections
-        processing_time: Processing time in milliseconds
-        logger: Logger instance
+        csv_path: CSVログファイルのパス
+        filename: 画像ファイル名
+        detected: オブジェクトが検出されたかどうか
+        count: 検出数
+        processing_time: 処理時間（ミリ秒）
+        logger: ロガーインスタンス
     """
     try:
+        # CSVファイルを追記モードで開き、UTF-8エンコーディングで書き込み
         with open(csv_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
+            # ファイル名、検出有無、検出数、処理時間をCSV行として書き込み
             writer.writerow([filename, detected, count, f"{processing_time:.1f}"])
     except Exception as e:
-        logger.error(f"Failed to write to CSV log: {e}")
+        # CSVファイル書き込みエラーをログに記録
+        logger.error(f"CSVログの書き込みに失敗しました: {e}")
 
 
 def process_images(
@@ -238,58 +248,62 @@ def process_images(
     confidence_threshold: float = 0.25
 ) -> None:
     """
-    Process all images in the input directory.
+    入力ディレクトリ内のすべての画像を処理します。
     
     Args:
-        model: YOLO model instance
-        input_dir: Input directory path
-        output_dir: Output directory path
-        csv_log_path: Path to CSV log file
-        logger: Logger instance
-        confidence_threshold: Minimum confidence for detections
+        model: YOLOモデルインスタンス
+        input_dir: 入力ディレクトリのパス
+        output_dir: 出力ディレクトリのパス
+        csv_log_path: CSVログファイルのパス
+        logger: ロガーインスタンス
+        confidence_threshold: 検出の最低信頼度
     """
-    # Create output directory if it doesn't exist
+    # 出力ディレクトリが存在しない場合は作成
     output_dir.mkdir(exist_ok=True)
     
-    # Get all image files
+    # 入力ディレクトリからすべての画像ファイルを取得
     image_files = get_image_files(input_dir, logger)
     
+    # 処理対象画像がない場合は警告を出して終了
     if not image_files:
-        logger.warning("No images to process")
+        logger.warning("処理対象の画像がありません")
         return
     
-    total_images = len(image_files)
-    successful_processed = 0
-    total_detections = 0
+    # 処理統計用の変数を初期化
+    total_images = len(image_files)          # 総画像数
+    successful_processed = 0                 # 正常処理数
+    total_detections = 0                     # 総検出数
     
-    logger.info(f"Starting batch processing of {total_images} images...")
+    logger.info(f"{total_images} 枚の画像のバッチ処理を開始します...")
     
+    # 各画像ファイルを順次処理
     for i, image_path in enumerate(image_files, 1):
         try:
-            # Record start time
+            # 処理開始時刻を記録（処理時間計測用）
             start_time = time.time()
             
-            logger.info(f"Processing [{i}/{total_images}]: {image_path.name}")
+            logger.info(f"処理中 [{i}/{total_images}]: {image_path.name}")
             
-            # Perform detection
+            # YOLOv8モデルで物体検出を実行
             annotated_image, detections, has_detections = detect_objects(
                 model, image_path, confidence_threshold
             )
             
-            # Calculate processing time
-            processing_time = (time.time() - start_time) * 1000  # Convert to ms
+            # 処理時間を計算（秒からミリ秒に変換）
+            processing_time = (time.time() - start_time) * 1000
             
-            # Generate output filename (always save as PNG)
+            # 出力ファイル名を生成（入力形式に関係なくPNGで保存）
             output_filename = image_path.stem + ".png"
             output_path = output_dir / output_filename
             
-            # Save result image
+            # 注釈付き画像を保存
             if save_result_image(annotated_image, output_path, logger):
+                # 正常処理カウンターを増加
                 successful_processed += 1
                 detection_count = len(detections)
                 total_detections += detection_count
                 
-                # Log results
+                # 処理結果をCSVログに記録
                 log_detection_result(
                     csv_log_path,
                     image_path.name,
@@ -299,38 +313,40 @@ def process_images(
                     logger
                 )
                 
-                # Console output
+                # コンソールに処理結果を表示
                 if has_detections:
+                    # 検出されたクラス名のリストを作成（重複除去）
                     classes_detected = [d['class'] for d in detections]
                     logger.info(
-                        f"✓ Detected {detection_count} objects: "
+                        f"✓ {detection_count} 個のオブジェクトを検出: "
                         f"{', '.join(set(classes_detected))} "
-                        f"(Time: {processing_time:.1f}ms)"
+                        f"(処理時間: {processing_time:.1f}ms)"
                     )
                 else:
-                    logger.info(f"✓ No objects detected (Time: {processing_time:.1f}ms)")
+                    logger.info(f"✓ オブジェクトは検出されませんでした (処理時間: {processing_time:.1f}ms)")
             
         except Exception as e:
-            logger.error(f"Failed to process {image_path.name}: {e}")
-            # Log failed processing
+            # 個別ファイルの処理エラーをログに記録（処理は継続）
+            logger.error(f"{image_path.name} の処理に失敗しました: {e}")
+            # 失敗した処理もCSVログに記録
             log_detection_result(
                 csv_log_path,
                 image_path.name,
-                False,
-                0,
-                0.0,
+                False,      # 検出なし
+                0,          # 検出数0
+                0.0,        # 処理時間0
                 logger
             )
     
-    # Summary
+    # 処理完了後の統計情報を表示
     logger.info("=" * 60)
-    logger.info("PROCESSING SUMMARY")
+    logger.info("処理結果サマリー")
     logger.info("=" * 60)
-    logger.info(f"Total images: {total_images}")
-    logger.info(f"Successfully processed: {successful_processed}")
-    logger.info(f"Failed: {total_images - successful_processed}")
-    logger.info(f"Total detections: {total_detections}")
-    logger.info(f"CSV log saved to: {csv_log_path}")
+    logger.info(f"総画像数: {total_images}")
+    logger.info(f"正常処理数: {successful_processed}")
+    logger.info(f"失敗数: {total_images - successful_processed}")
+    logger.info(f"総検出数: {total_detections}")
+    logger.info(f"CSVログ保存先: {csv_log_path}")
     logger.info("=" * 60)
 
 
@@ -385,12 +401,12 @@ def main():
     
     args = parser.parse_args()
     
-    # Pathオブジェクトに変換
+    # コマンドライン引数をPathオブジェクトに変換（パス操作を簡潔にするため）
     input_dir = Path(args.input)
     output_dir = Path(args.output)
     log_dir = Path(args.log_dir)
     
-    # 入力ディレクトリの検証
+    # 入力ディレクトリの存在確認と検証
     if not input_dir.exists():
         print(f"エラー: 入力ディレクトリ '{input_dir}' が存在しません")
         sys.exit(1)
@@ -399,34 +415,36 @@ def main():
         print(f"エラー: '{input_dir}' はディレクトリではありません")
         sys.exit(1)
     
-    # ログ設定を初期化
+    # ロギングシステムを初期化（コンソール出力とCSVファイル出力を設定）
     logger, csv_log_path = setup_logging(log_dir)
     
-    # モデルを読み込み
+    # 指定されたパスからYOLOv8モデルを読み込み
     model = load_model(args.model, logger)
     
-    # モデル情報をログ出力
-    logger.info(f"モデルクラス: {list(model.names.values())}")
+    # モデル情報と処理パラメータをログに出力
+    logger.info(f"検出可能クラス: {list(model.names.values())}")
     logger.info(f"入力ディレクトリ: {input_dir}")
     logger.info(f"出力ディレクトリ: {output_dir}")
-    logger.info(f"信頼度闾値: {args.conf}")
+    logger.info(f"信頼度閾値: {args.conf}")
     
-    # 画像を処理
+    # メイン画像処理ループを実行
     try:
         process_images(
-            model=model,                      # モデルインスタンス
-            input_dir=input_dir,              # 入力ディレクトリ
-            output_dir=output_dir,            # 出力ディレクトリ
-            csv_log_path=csv_log_path,        # CSVログパス
-            logger=logger,                    # ロガー
-            confidence_threshold=args.conf    # 信頼度闾値
+            model=model,                      # 読み込み済みYOLOモデル
+            input_dir=input_dir,              # 処理対象画像の入力ディレクトリ
+            output_dir=output_dir,            # 結果画像の出力ディレクトリ
+            csv_log_path=csv_log_path,        # 処理ログのCSVファイルパス
+            logger=logger,                    # ロガーインスタンス
+            confidence_threshold=args.conf    # 検出の最低信頼度閾値
         )
-        logger.info("処理が成功しました")
+        logger.info("すべての処理が正常に完了しました")
     except KeyboardInterrupt:
+        # Ctrl+Cによる中断を適切に処理
         logger.info("ユーザーによって処理が中断されました")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"処理が失敗しました: {e}")
+        # 予期しないエラーをログに記録して終了
+        logger.error(f"処理中に予期しないエラーが発生しました: {e}")
         sys.exit(1)
 
 
