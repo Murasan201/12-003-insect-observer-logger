@@ -160,12 +160,45 @@ python detect_insect.py --input input_images/ --output output_images/
 - Use external storage or download scripts for dataset distribution
 
 ### Ignored Files
-- Model weights (*.pt, *.pth)
+- **Model weights (*.pt, *.pth, *.onnx)** - Store in Hugging Face instead
 - Input/output directories
 - Log files
 - Temporary files
 - Python cache files
 - **Dataset files (datasets/, *.jpg, *.png, *.txt, data.yaml)**
+
+### Model File Distribution Policy
+
+**IMPORTANT: Model files must NOT be uploaded to GitHub**
+
+#### Rationale
+- **License Compliance**: Trained models inherit AGPL-3.0 from YOLOv8
+- **File Size**: Model files (6.3MB+) approach GitHub's recommended limits
+- **Distribution Strategy**: Hugging Face Model Hub is optimized for ML models
+- **Commercial Safety**: Separation maintains MIT license for codebase
+
+#### Approved Distribution Method
+- **GitHub Repository**: Source code, training scripts, documentation (MIT License)
+- **Hugging Face Model Hub**: Trained model weights with proper AGPL-3.0 attribution
+- **Book Integration**: Programmatic download via `huggingface_hub` library
+
+#### Prohibited Actions
+- ❌ Committing model files (*.pt, *.pth, *.onnx) to GitHub
+- ❌ Using Git LFS for model storage
+- ❌ Distributing models without proper AGPL-3.0 compliance
+- ❌ Mixing model files with MIT-licensed codebase
+
+#### Implementation
+```python
+# Correct approach - Reference external models
+from huggingface_hub import hf_hub_download
+
+model_path = hf_hub_download(
+    repo_id="[username]/beetle-detection-yolov8",
+    filename="best.pt",
+    local_dir="./weights"
+)
+```
 
 ## Documentation
 

@@ -210,3 +210,170 @@ insect-detection-training/
 - **Cost Efficiency**: Free GPU access with Google Colab  
 - **Scalability**: Easy to scale up with Colab Pro if needed  
 - **Reproducibility**: Notebook-based training for consistent results  
+
+---
+
+## 12. License and Distribution Strategy
+
+### 12.1 License Analysis Results (2025-07-04)
+
+#### 12.1.1 Component Licensing
+| Component | License | Impact | Commercial Use |
+|-----------|---------|--------|---------|
+| **Project Code** | MIT | Permissive | ✅ Unrestricted |
+| **YOLOv8 Framework** | AGPL-3.0 | Strong Copyleft | ⚠️ Restricted |
+| **Training Dataset** | CC BY 4.0 | Attribution Required | ✅ Allowed |
+| **Trained Model** | AGPL-3.0 (inherited) | Strong Copyleft | ⚠️ Restricted |
+
+#### 12.1.2 Key License Implications
+
+**YOLOv8 AGPL-3.0 Requirements:**
+- **Network Use Clause**: Service provision = distribution requirement
+- **Copyleft Effect**: Derived works must be AGPL-3.0
+- **Source Code Disclosure**: Required for network services
+- **Commercial Alternative**: Ultralytics Enterprise License available
+
+**Dataset CC BY 4.0 Requirements:**
+- **Attribution**: Credit to "z Algae Bilby"
+- **Source Reference**: https://universe.roboflow.com/z-algae-bilby/beetle/dataset/1
+- **Modification Notice**: Training constitutes derivative work
+- **License Compatibility**: Compatible with AGPL-3.0
+
+#### 12.1.3 Commercial Book Publication Analysis
+
+**Legal Assessment: ✅ PERMITTED**
+
+Rationale:
+- **No Direct Distribution**: Book references models via external links
+- **Educational Commentary**: Book constitutes separate literary work
+- **Reader Independence**: Downloads performed by readers independently
+- **Clear Attribution**: Proper licensing disclosure provided
+
+### 12.2 Distribution Strategy
+
+#### 12.2.1 Separation Architecture (Recommended)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    GitHub Repository                        │
+│                      (MIT License)                         │
+├─────────────────────────────────────────────────────────────┤
+│  • Source Code                                             │
+│  • Training Scripts                                        │
+│  • Documentation                                           │
+│  • Book Integration Code                                   │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+                          │ References
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Hugging Face Model Hub                   │
+│                    (AGPL-3.0 License)                      │
+├─────────────────────────────────────────────────────────────┤
+│  • Trained Model Weights (best.pt)                        │
+│  • Model Card Documentation                                │
+│  • Performance Metrics                                     │
+│  • Usage Examples                                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 12.2.2 Benefits of Separation
+
+**Legal Benefits:**
+- **License Isolation**: MIT code separate from AGPL-3.0 models
+- **Commercial Safety**: Book publication legally protected
+- **Clear Boundaries**: Distinct licensing responsibilities
+
+**Technical Benefits:**
+- **Programmatic Access**: `huggingface_hub` integration
+- **Version Control**: Independent model and code versioning
+- **Distribution**: Optimized model hosting and bandwidth
+
+**Educational Benefits:**
+- **Easy Access**: One-click model download for book readers
+- **Learning Paths**: Multiple complexity levels supported
+- **Reproducibility**: Consistent model access across readers
+
+#### 12.2.3 Implementation Guidelines
+
+**GitHub Repository (MIT):**
+- Training scripts and detection code
+- Book integration utilities
+- Documentation and tutorials
+- Clear license attribution
+
+**Hugging Face Repository (AGPL-3.0):**
+- Trained model weights (best.pt, best.onnx)
+- Comprehensive model card
+- Performance benchmarks
+- Usage examples and attribution
+
+**Book Integration:**
+```python
+# Recommended pattern for book readers
+from huggingface_hub import hf_hub_download
+
+# Automatic model download
+model_path = hf_hub_download(
+    repo_id="[author]/beetle-detection-yolov8",
+    filename="best.pt",
+    local_dir="./weights"
+)
+```
+
+### 12.3 Compliance Requirements
+
+#### 12.3.1 Attribution Requirements
+
+**Dataset Attribution (CC BY 4.0):**
+```markdown
+Dataset: Beetle Detection Dataset by z Algae Bilby
+Source: https://universe.roboflow.com/z-algae-bilby/beetle/dataset/1
+License: CC BY 4.0
+Modifications: Used for YOLOv8 model training
+```
+
+**Model Attribution (AGPL-3.0):**
+```markdown
+Model: YOLOv8-based Beetle Detection
+Framework: Ultralytics YOLOv8 (AGPL-3.0)
+License: GNU Affero General Public License v3.0
+Commercial License: Available from Ultralytics
+```
+
+#### 12.3.2 Recommended Disclaimers
+
+**For Book Publication:**
+```markdown
+Legal Notice: This book references open-source models subject to 
+various licenses including AGPL-3.0. Readers are responsible for 
+understanding and complying with applicable licenses when using 
+these models. For commercial deployments, readers should consult 
+legal counsel and consider enterprise licensing options.
+```
+
+**For Repository:**
+```markdown
+Important: The trained models referenced in this repository are 
+licensed under AGPL-3.0. Commercial use may require enterprise 
+licensing from Ultralytics. Educational and research use is 
+encouraged under the open-source license terms.
+```
+
+### 12.4 Risk Assessment
+
+#### 12.4.1 Risk Level: **LOW** ✅
+
+**Mitigating Factors:**
+- No direct AGPL-3.0 software distribution
+- Clear separation of licensed components
+- Educational focus with proper attribution
+- Transparent licensing documentation
+
+#### 12.4.2 Ongoing Compliance
+
+**Monitoring Requirements:**
+- Regular license compliance review
+- Updated attribution as needed
+- Clear communication of licensing terms
+- Consultation with legal counsel for commercial use

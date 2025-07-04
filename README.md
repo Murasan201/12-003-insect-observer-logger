@@ -52,9 +52,26 @@ pip install -r requirements.txt
 
 ## 🚀 Usage
 
-### Basic Usage
+### Quick Start with Pre-trained Model
+
+For readers who want to immediately test the beetle detection:
+
+1. **Download the pre-trained model** from Hugging Face:
+   - Visit: `https://huggingface.co/[your-username]/beetle-detection-yolov8`
+   - Download `best.pt` to the `weights/` directory
+
+2. **Run detection**:
 ```bash
 python detect_insect.py --input input_images/ --output output_images/
+```
+
+### Complete Training Pipeline
+
+For readers who want to understand the full training process:
+
+```bash
+# Open the training notebook
+jupyter notebook yolov8_training_colab.ipynb
 ```
 
 ### Command Line Arguments
@@ -128,6 +145,39 @@ The project follows a clean, modular structure with clear separation of concerns
 - **Logging**: Structured logging with CSV output
 - **Error Handling**: Graceful handling of individual file failures
 
+## 📚 For Book Readers
+
+This project serves as a companion to **[Your Book Title]** - Chapter X: Insect Detection with YOLOv8.
+
+### Learning Paths
+
+#### 🚀 **Quick Start** (5 minutes)
+Perfect for readers who want to see results immediately:
+1. Clone this repository
+2. Download pre-trained model from Hugging Face
+3. Run detection on sample images
+4. See the results!
+
+#### 📖 **Full Learning** (2-3 hours)  
+For readers who want to understand the complete process:
+1. Read the theory in the book chapter
+2. Follow the Jupyter notebook step-by-step
+3. Train your own model with the dataset
+4. Compare results with the pre-trained model
+
+#### 🔬 **Advanced Exploration** (1-2 days)
+For readers ready to experiment:
+1. Try different YOLOv8 model sizes (nano → small → medium)
+2. Experiment with your own insect images
+3. Fine-tune hyperparameters
+4. Deploy on Raspberry Pi (Chapter X+1)
+
+### Model Access
+
+- **Pre-trained Model**: [Hugging Face Repository](https://huggingface.co/[your-username]/beetle-detection-yolov8)
+- **Training Code**: This GitHub repository
+- **Dataset**: Instructions provided in the book
+
 ## 🔒 Security
 
 This project implements security best practices:
@@ -184,7 +234,22 @@ This is a training project designed to develop custom YOLOv8 models for insect d
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Code License
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0) - see the [LICENSE](LICENSE) file for details.
+
+### Dataset Attribution
+This model was trained using the Beetle Dataset by z Algae Bilby, licensed under CC BY 4.0.
+- **Dataset**: [Roboflow Beetle Dataset](https://universe.roboflow.com/z-algae-bilby/beetle/dataset/1)
+- **License**: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Creator**: z Algae Bilby
+- **Modifications**: Used for training YOLOv8 object detection model
+
+### Model License
+The trained model (`best.pt`) is derived from YOLOv8 (Ultralytics) and inherits the AGPL-3.0 license.
+
+### Third-Party Components
+- **YOLOv8**: Ultralytics - AGPL-3.0 License
+- **Training Dataset**: z Algae Bilby - CC BY 4.0 License
 
 ## 🤝 Contributing
 
