@@ -243,17 +243,40 @@ roboflow:
 - **Alternative**: macOS 12+, Windows 10/11 with WSL2
 - **Python**: 3.9+ (tested with 3.10.12)
 
-#### 6.2.2 Dependencies
+#### 6.2.2 Dependencies (Verified Versions)
 ```
-ultralytics>=8.0.0
-torch>=1.12.0
-torchvision>=0.13.0
-opencv-python>=4.5.0
-numpy>=1.21.0
-matplotlib>=3.5.0
-pillow>=8.3.0
-pyyaml>=6.0
+# Core ML Frameworks
+torch==2.7.1                    # Deep Learning Framework
+torchvision==0.22.1             # Computer Vision
+ultralytics==8.3.162            # YOLOv8 Implementation
+
+# Computer Vision & Image Processing
+opencv-python==4.11.0.86        # Computer Vision Library
+numpy==2.2.6                    # Numerical Computing
+pandas==2.3.0                   # Data Analysis
+matplotlib==3.10.3              # Plotting & Visualization
+pillow>=11.3.0                  # Image Processing
+
+# Additional Dependencies
+ultralytics-thop==2.0.14        # Model Profiling
+pyyaml>=5.3.1                   # Configuration Files
+tqdm>=4.65.0                    # Progress Bars
 ```
+
+#### 6.2.3 Installation Commands
+```bash
+# Install core dependencies
+pip3 install torch torchvision ultralytics opencv-python
+
+# Or install all requirements
+pip3 install -r requirements.txt
+```
+
+#### 6.2.4 Current Environment Status
+- **System**: Linux WSL2 (Ubuntu) x86_64
+- **Python**: 3.10.12 (System Level)
+- **Package Installation**: User-level (~/.local/lib/python3.10/site-packages/)
+- **Last Verified**: 2025-07-04
 
 ---
 
@@ -267,7 +290,17 @@ pyyaml>=6.0
 - **Model Convergence**: Loss stabilization within 50-80 epochs
 - **Validation mAP@0.5**: ≥ 0.7 for beetle detection
 
-#### 7.1.2 Hardware-Specific Performance
+#### 7.1.2 Achieved Performance (2025-07-04)
+**🏆 Exceptional Results Achieved:**
+- **Final mAP@0.5**: 0.9763 (97.63%) - **39.4% above target**
+- **mAP@0.5:0.95**: 0.6550 (65.50%)
+- **Precision**: 0.9598 (95.98%)
+- **Recall**: 0.9305 (93.05%)
+- **Training Platform**: Google Colab (GPU accelerated)
+- **Model Size**: YOLOv8 Nano (best.pt: 6.3MB)
+- **Training Status**: Production-ready quality
+
+#### 7.1.3 Hardware-Specific Performance
 | Configuration | Training Time (100 epochs) | Memory Usage | Batch Size |
 |---------------|----------------------------|--------------|------------|
 | CPU Only | 8-12 hours | 4-6 GB | 8-16 |
@@ -284,6 +317,16 @@ pyyaml>=6.0
   - False Positive Rate: ≤ 5%
   - Precision: ≥ 0.8
   - Recall: ≥ 0.8
+
+#### 7.2.2 Achieved Local Inference Performance (2025-07-04)
+**🚀 Outstanding Local Performance:**
+- **Average Processing Time**: ~100ms per image (**90% faster than target**)
+- **Processing Range**: 63.4ms - 121.2ms per image
+- **Test Results**: 5/5 images processed successfully (100% success rate)
+- **Total Detections**: 9 beetles detected across 5 images
+- **System**: Linux WSL2, Python 3.10.12, CPU-only inference
+- **Model**: best.pt (6.3MB YOLOv8 Nano)
+- **Memory Usage**: Minimal system impact
 
 ---
 

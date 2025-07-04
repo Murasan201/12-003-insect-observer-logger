@@ -87,12 +87,22 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### Virtual Environment Information
-- **Environment Name**: venv
-- **Python Version**: 3.10.12
+### System Environment Information
+- **Python Version**: 3.10.12 (System Level)
 - **Pip Version**: 22.0.2
-- **Location**: `/home/win/work/projetct/insect-detection-cpu-test/venv/`
-- **Created**: 2025-06-30
+- **Installation Type**: User-level packages (pip install --user)
+- **Package Location**: `/home/win/.local/lib/python3.10/site-packages/`
+- **System**: Linux WSL2 (Ubuntu)
+- **Architecture**: x86_64
+- **Last Updated**: 2025-07-04
+
+### Installed Key Packages
+- **torch**: 2.7.1 (Deep Learning Framework)
+- **torchvision**: 0.22.1 (Computer Vision)
+- **ultralytics**: 8.3.162 (YOLOv8 Implementation)
+- **opencv-python**: 4.11.0.86 (Computer Vision)
+- **numpy**: 2.2.6 (Numerical Computing)
+- **pandas**: 2.3.0 (Data Analysis)
 
 ## Usage Guidelines
 
