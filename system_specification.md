@@ -40,11 +40,93 @@ The system is designed to:
 
 ---
 
-## 3. System Components
+## 3. Project Structure
 
-### 3.1 Core Modules
+### 3.1 Directory Organization
 
-#### 3.1.1 Training Module (`train_yolo.py`)
+```
+insect-detection-training/
+├── 📁 Core Components
+│   ├── detect_insect.py               # Main detection script
+│   ├── train_yolo.py                  # Training script
+│   ├── yolov8_training_colab.ipynb   # Jupyter training notebook
+│   └── requirements.txt               # Python dependencies
+│
+├── 📁 Configuration & Documentation
+│   ├── CLAUDE.md                      # Project rules and guidelines
+│   ├── README.md                      # Project documentation
+│   ├── system_specification.md       # Technical specifications
+│   ├── LICENSE                        # Project license
+│   └── .gitignore                     # Git ignore rules
+│
+├── 📁 Training Data (datasets/)
+│   ├── train/
+│   │   ├── images/                    # Training images
+│   │   └── labels/                    # Training labels (YOLO format)
+│   ├── valid/
+│   │   ├── images/                    # Validation images
+│   │   └── labels/                    # Validation labels
+│   ├── test/
+│   │   ├── images/                    # Test images
+│   │   └── labels/                    # Test labels
+│   └── data.yaml                      # Dataset configuration
+│
+├── 📁 Local Testing Environment
+│   ├── input_images/                  # 🔍 Input images for detection
+│   │   ├── 08-03.jpg                  # Sample beetle image (2.0MB)
+│   │   ├── 20240810_130054-1600x1200-1-853x640.jpg
+│   │   ├── 86791_ext_04_0.jpg
+│   │   ├── insect_catching_1220x752.jpg
+│   │   └── point_thumb01.jpg
+│   │
+│   ├── output_images/                 # 📤 Detection results (PNG format)
+│   │   ├── 08-03.png                  # Processed with bounding boxes
+│   │   ├── 20240810_130054-1600x1200-1-853x640.png
+│   │   ├── 86791_ext_04_0.png
+│   │   ├── insect_catching_1220x752.png
+│   │   └── point_thumb01.png
+│   │
+│   ├── weights/                       # 🤖 Trained model files
+│   │   ├── best.pt                    # Best model weights (6.3MB)
+│   │   └── best.onnx                  # ONNX export (12.3MB)
+│   │
+│   └── logs/                          # 📊 Detection logs
+│       └── detection_log_YYYYMMDD_HHMMSS.csv
+│
+└── 📁 Development & Build
+    ├── .git/                          # Git repository
+    ├── .claude/                       # Claude Code configuration
+    └── .mcp.json                      # MCP configuration
+```
+
+### 3.2 Directory Purposes
+
+#### 3.2.1 Training Data (`datasets/`)
+- **Size**: ~500+ beetle images across train/valid/test splits
+- **Format**: YOLO format (normalized coordinates)
+- **Source**: Roboflow dataset (CC BY 4.0 license)
+- **Status**: Excluded from Git (.gitignore)
+
+#### 3.2.2 Local Testing Environment
+- **`input_images/`**: Place new images for detection testing
+- **`output_images/`**: Receive annotated results with bounding boxes
+- **`weights/`**: Store trained model files (PyTorch and ONNX)
+- **`logs/`**: CSV logs with detection details and performance metrics
+
+#### 3.2.3 Workflow Integration
+1. **Training**: Use Jupyter notebook or train_yolo.py
+2. **Model Export**: Save best.pt to weights/ directory
+3. **Local Testing**: Place images in input_images/
+4. **Detection**: Run detect_insect.py with custom models
+5. **Results**: View annotated images in output_images/
+
+---
+
+## 4. System Components
+
+### 4.1 Core Modules
+
+#### 4.1.1 Training Module (`train_yolo.py`)
 **Purpose**: Automated YOLOv8 model training and fine-tuning
 
 **Key Features**:
@@ -60,7 +142,7 @@ The system is designed to:
 - **Input Format**: YOLO format annotations
 - **Output Format**: PyTorch (.pt), ONNX, TorchScript
 
-#### 3.1.2 Detection Module (`detect_insect.py`)
+#### 4.1.2 Detection Module (`detect_insect.py`)
 **Purpose**: Batch image processing and insect detection
 
 **Key Features**:
@@ -71,11 +153,11 @@ The system is designed to:
 
 ---
 
-## 4. Training System Detailed Specification
+## 5. Training System Detailed Specification
 
-### 4.1 Training Script Architecture
+### 5.1 Training Script Architecture
 
-#### 4.1.1 Function Overview
+#### 5.1.1 Function Overview
 
 | Function | Purpose | Input | Output |
 |----------|---------|-------|--------|
@@ -86,7 +168,7 @@ The system is designed to:
 | `validate_model()` | Model performance evaluation | Model, dataset | Validation metrics |
 | `export_model()` | Model format conversion | Model, formats | Exported model files |
 
-#### 4.1.2 Training Parameters
+#### 5.1.2 Training Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -101,9 +183,9 @@ The system is designed to:
 | `--export` | bool | False | Enable model export |
 | `--validate` | bool | True | Enable post-training validation |
 
-### 4.2 Training Workflow
+### 5.2 Training Workflow
 
-#### 4.2.1 Initialization Phase
+#### 5.2.1 Initialization Phase
 1. **Logging Setup**
    - Create timestamped log files in `logs/` directory
    - Configure dual output (file + console)
@@ -122,7 +204,7 @@ The system is designed to:
    - Count files in train/valid/test splits
    - Validate image-label correspondence
 
-#### 4.2.2 Training Phase
+#### 5.2.2 Training Phase
 1. **Model Initialization**
    - Load pre-trained YOLOv8 weights
    - Configure model architecture
@@ -141,7 +223,7 @@ The system is designed to:
    - Training time measurement
    - Resource utilization logging
 
-#### 4.2.3 Validation Phase
+#### 5.2.3 Validation Phase
 1. **Performance Metrics**
    - mAP@0.5 (Mean Average Precision at IoU 0.5)
    - mAP@0.5:0.95 (Mean Average Precision across IoU thresholds)
@@ -154,7 +236,7 @@ The system is designed to:
    - Sample detection visualizations
    - Model performance summary
 
-#### 4.2.4 Export Phase
+#### 5.2.4 Export Phase
 1. **Format Conversion**
    - ONNX export for cross-platform deployment
    - TorchScript export for production optimization
@@ -168,9 +250,9 @@ The system is designed to:
 
 ---
 
-## 5. Dataset Specifications
+## 6. Dataset Specifications
 
-### 5.1 Dataset Structure
+### 6.1 Dataset Structure
 ```
 datasets/
 ├── train/
@@ -185,15 +267,15 @@ datasets/
 └── data.yaml            # Dataset configuration
 ```
 
-### 5.2 Data Format Requirements
+### 6.2 Data Format Requirements
 
-#### 5.2.1 Image Specifications
+#### 6.2.1 Image Specifications
 - **Formats**: JPEG, PNG
 - **Resolution**: Minimum 640x640 pixels recommended
 - **Color Space**: RGB
 - **File Naming**: Consistent with corresponding label files
 
-#### 5.2.2 Label Format (YOLO)
+#### 6.2.2 Label Format (YOLO)
 ```
 class_id x_center y_center width height
 ```
@@ -201,7 +283,7 @@ class_id x_center y_center width height
 - **Coordinates**: Normalized (0.0 to 1.0)
 - **File Extension**: `.txt`
 
-#### 5.2.3 Configuration File (data.yaml)
+#### 6.2.3 Configuration File (data.yaml)
 ```yaml
 train: ./train/images
 val: ./valid/images
@@ -220,30 +302,30 @@ roboflow:
 
 ---
 
-## 6. System Requirements
+## 8. System Requirements
 
-### 6.1 Hardware Requirements
+### 8.1 Hardware Requirements
 
-#### 6.1.1 Minimum Requirements
+#### 8.1.1 Minimum Requirements
 - **CPU**: Quad-core processor (Intel i5 or AMD Ryzen 5 equivalent)
 - **RAM**: 8GB system memory
 - **Storage**: 10GB free space for datasets and models
 - **GPU**: Optional (CUDA-compatible for accelerated training)
 
-#### 6.1.2 Recommended Requirements
+#### 8.1.2 Recommended Requirements
 - **CPU**: 8-core processor (Intel i7 or AMD Ryzen 7)
 - **RAM**: 16GB+ system memory
 - **Storage**: 50GB+ SSD storage
 - **GPU**: NVIDIA GPU with 6GB+ VRAM (RTX 3060 or better)
 
-### 6.2 Software Requirements
+### 8.2 Software Requirements
 
-#### 6.2.1 Operating System
+#### 8.2.1 Operating System
 - **Primary**: Ubuntu 22.04 LTS (WSL2 on Windows 10/11)
 - **Alternative**: macOS 12+, Windows 10/11 with WSL2
 - **Python**: 3.9+ (tested with 3.10.12)
 
-#### 6.2.2 Dependencies (Verified Versions)
+#### 8.2.2 Dependencies (Verified Versions)
 ```
 # Core ML Frameworks
 torch==2.7.1                    # Deep Learning Framework
@@ -263,7 +345,7 @@ pyyaml>=5.3.1                   # Configuration Files
 tqdm>=4.65.0                    # Progress Bars
 ```
 
-#### 6.2.3 Installation Commands
+#### 8.2.3 Installation Commands
 ```bash
 # Install core dependencies
 pip3 install torch torchvision ultralytics opencv-python
@@ -272,7 +354,7 @@ pip3 install torch torchvision ultralytics opencv-python
 pip3 install -r requirements.txt
 ```
 
-#### 6.2.4 Current Environment Status
+#### 8.2.4 Current Environment Status
 - **System**: Linux WSL2 (Ubuntu) x86_64
 - **Python**: 3.10.12 (System Level)
 - **Package Installation**: User-level (~/.local/lib/python3.10/site-packages/)
@@ -280,17 +362,17 @@ pip3 install -r requirements.txt
 
 ---
 
-## 7. Performance Specifications
+## 9. Performance Specifications
 
-### 7.1 Training Performance
+### 9.1 Training Performance
 
-#### 7.1.1 Target Metrics
+#### 9.1.1 Target Metrics
 - **Training Time**: ≤ 2 hours for 100 epochs (GPU environment)
 - **Memory Usage**: ≤ 8GB RAM during training
 - **Model Convergence**: Loss stabilization within 50-80 epochs
 - **Validation mAP@0.5**: ≥ 0.7 for beetle detection
 
-#### 7.1.2 Achieved Performance (2025-07-04)
+#### 9.1.2 Achieved Performance (2025-07-04)
 **🏆 Exceptional Results Achieved:**
 - **Final mAP@0.5**: 0.9763 (97.63%) - **39.4% above target**
 - **mAP@0.5:0.95**: 0.6550 (65.50%)
@@ -300,16 +382,16 @@ pip3 install -r requirements.txt
 - **Model Size**: YOLOv8 Nano (best.pt: 6.3MB)
 - **Training Status**: Production-ready quality
 
-#### 7.1.3 Hardware-Specific Performance
+#### 9.1.3 Hardware-Specific Performance
 | Configuration | Training Time (100 epochs) | Memory Usage | Batch Size |
 |---------------|----------------------------|--------------|------------|
 | CPU Only | 8-12 hours | 4-6 GB | 8-16 |
 | RTX 3060 | 1-2 hours | 6-8 GB | 32-64 |
 | RTX 4080 | 30-60 minutes | 8-12 GB | 64-128 |
 
-### 7.2 Inference Performance
+### 9.2 Inference Performance
 
-#### 7.2.1 Target Specifications
+#### 9.2.1 Target Specifications
 - **Processing Time**: ≤ 1,000ms per image (CPU inference)
 - **Memory Efficiency**: ≤ 2GB RAM during inference
 - **Accuracy Targets**:
@@ -318,7 +400,7 @@ pip3 install -r requirements.txt
   - Precision: ≥ 0.8
   - Recall: ≥ 0.8
 
-#### 7.2.2 Achieved Local Inference Performance (2025-07-04)
+#### 9.2.2 Achieved Local Inference Performance (2025-07-04)
 **🚀 Outstanding Local Performance:**
 - **Average Processing Time**: ~100ms per image (**90% faster than target**)
 - **Processing Range**: 63.4ms - 121.2ms per image
@@ -330,27 +412,27 @@ pip3 install -r requirements.txt
 
 ---
 
-## 8. Output Specifications
+## 10. Output Specifications
 
-### 8.1 Training Outputs
+### 10.1 Training Outputs
 
-#### 8.1.1 Model Files
+#### 10.1.1 Model Files
 - **best.pt**: Best performing model weights
 - **last.pt**: Final epoch weights
 - **Model exports**: ONNX, TorchScript formats
 
-#### 8.1.2 Visualization Files
+#### 10.1.2 Visualization Files
 - **results.png**: Training/validation curves
 - **confusion_matrix.png**: Classification performance matrix
 - **labels.jpg**: Ground truth label distribution
 - **predictions.jpg**: Model prediction samples
 
-#### 8.1.3 Log Files
+#### 10.1.3 Log Files
 - **Training logs**: Timestamped training progress
 - **CSV metrics**: Epoch-by-epoch performance data
 - **System logs**: Hardware utilization and errors
 
-### 8.2 File Organization
+### 10.2 File Organization
 ```
 training_results/
 └── beetle_detection/
@@ -367,66 +449,66 @@ training_results/
 
 ---
 
-## 9. Error Handling and Logging
+## 11. Error Handling and Logging
 
-### 9.1 Error Classification
+### 11.1 Error Classification
 
-#### 9.1.1 Critical Errors
+#### 11.1.1 Critical Errors
 - Dataset validation failures
 - Model loading errors
 - CUDA out-of-memory errors
 - File system permission issues
 
-#### 9.1.2 Warning Conditions
+#### 11.1.2 Warning Conditions
 - Low available memory
 - Slow training convergence
 - Missing optional dependencies
 - Suboptimal hardware configuration
 
-### 9.2 Logging Specifications
+### 11.2 Logging Specifications
 
-#### 9.2.1 Log Levels
+#### 11.2.1 Log Levels
 - **INFO**: Normal operation progress
 - **WARNING**: Non-critical issues
 - **ERROR**: Recoverable failures
 - **CRITICAL**: System-stopping errors
 
-#### 9.2.2 Log Format
+#### 11.2.2 Log Format
 ```
 YYYY-MM-DD HH:MM:SS - LEVEL - MESSAGE
 ```
 
-#### 9.2.3 Log Rotation
+#### 11.2.3 Log Rotation
 - New log file per training session
 - Timestamp-based naming convention
 - Automatic cleanup of old logs (>30 days)
 
 ---
 
-## 10. Security Considerations
+## 12. Security Considerations
 
-### 10.1 Data Security
+### 12.1 Data Security
 - Dataset files excluded from version control
 - No sensitive information in configuration files
 - Secure handling of model weights
 
-### 10.2 System Security
+### 12.2 System Security
 - Input validation for all user parameters
 - Safe file path handling
 - Memory usage monitoring and limits
 
 ---
 
-## 11. Deployment Guidelines
+## 13. Deployment Guidelines
 
-### 11.1 Development Environment Setup
+### 13.1 Development Environment Setup
 1. Clone repository from GitHub
 2. Create Python virtual environment
 3. Install dependencies from requirements.txt
 4. Download and prepare dataset
 5. Verify system requirements
 
-### 11.2 Training Execution
+### 13.2 Training Execution
 ```bash
 # Basic training command
 python train_yolo.py --data datasets/data.yaml --epochs 100
@@ -442,7 +524,7 @@ python train_yolo.py \
     --export
 ```
 
-### 11.3 Model Deployment
+### 13.3 Model Deployment
 1. Export trained model to ONNX format
 2. Optimize for target hardware platform
 3. Integrate with inference application
@@ -450,35 +532,35 @@ python train_yolo.py \
 
 ---
 
-## 12. Maintenance and Updates
+## 14. Maintenance and Updates
 
-### 12.1 Model Retraining
+### 14.1 Model Retraining
 - Recommended frequency: Monthly with new data
 - Version control for model weights
 - Performance comparison with previous versions
 
-### 12.2 System Updates
+### 14.2 System Updates
 - Regular dependency updates
 - YOLOv8 framework version monitoring
 - Security patch application
 
 ---
 
-## 13. Testing and Validation
+## 15. Testing and Validation
 
-### 13.1 Unit Testing
+### 15.1 Unit Testing
 - Dataset validation functions
 - Model loading/saving operations
 - Configuration file parsing
 - Error handling mechanisms
 
-### 13.2 Integration Testing
+### 15.2 Integration Testing
 - End-to-end training pipeline
 - Model export functionality
 - Cross-platform compatibility
 - Performance benchmarking
 
-### 13.3 Acceptance Testing
+### 15.3 Acceptance Testing
 - Model accuracy validation
 - Performance requirement verification
 - User interface testing
@@ -486,9 +568,9 @@ python train_yolo.py \
 
 ---
 
-## 14. Appendices
+## 16. Appendices
 
-### 14.1 Command Reference
+### 16.1 Command Reference
 ```bash
 # Display help information
 python train_yolo.py --help
@@ -503,15 +585,15 @@ python train_yolo.py --data datasets/data.yaml --model yolov8m.pt --epochs 200 -
 python train_yolo.py --data datasets/data.yaml --device cpu --batch 8
 ```
 
-### 14.2 Troubleshooting Guide
+### 16.2 Troubleshooting Guide
 
-#### 14.2.1 Common Issues
+#### 16.2.1 Common Issues
 - **"Dataset not found"**: Verify dataset directory structure
 - **"CUDA out of memory"**: Reduce batch size or use CPU
 - **"Permission denied"**: Check file system permissions
 - **"Import error"**: Reinstall dependencies
 
-#### 14.2.2 Performance Optimization
+#### 16.2.2 Performance Optimization
 - Use SSD storage for faster data loading
 - Optimize batch size based on available memory
 - Enable mixed precision training for GPU speedup
