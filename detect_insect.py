@@ -1,110 +1,114 @@
 #!/usr/bin/env python3
 """
-Insect Detection Application using YOLOv8
+YOLOv8を使用した昆虫検出アプリケーション
 
-A CPU-based insect detection application that processes images in batch
-and outputs visualization results with comprehensive logging.
+CPUベースの昆虫検出アプリケーション。画像をバッチ処理し、
+包括的なログと共に可視化結果を出力します。
 
-Author: Generated with Claude Code
-License: MIT
+作成者: Generated with Claude Code
+ライセンス: MIT
 """
 
-import argparse
-import csv
-import logging
-import os
-import sys
-import time
+# 標準ライブラリのインポート
+import argparse     # コマンドライン引数解析
+import csv          # CSVファイル処理
+import logging      # ログ出力
+import os           # OS機能
+import sys          # システム機能
+import time         # 時刻計測
 from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
-import cv2
-import numpy as np
-from ultralytics import YOLO
+# 外部ライブラリのインポート
+import cv2          # OpenCV コンピュータビジョン
+import numpy as np  # 数値計算
+from ultralytics import YOLO  # YOLOv8 モデル
 
 
 def setup_logging(log_dir: Path) -> Tuple[logging.Logger, str]:
     """
-    Setup logging configuration for both console and file output.
+    コンソールとファイル出力の両方に対してログ設定を初期化します。
     
     Args:
-        log_dir: Directory to store log files
+        log_dir: ログファイルを保存するディレクトリ
         
     Returns:
-        Tuple of logger instance and CSV log filename
+        ロガーインスタンスとCSVログファイル名のタプル
     """
-    # Create log directory if it doesn't exist
+    # ログディレクトリが存在しない場合は作成
     log_dir.mkdir(exist_ok=True)
     
-    # Setup console logging
+    # コンソールログの設定
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.StreamHandler(sys.stdout)
+            logging.StreamHandler(sys.stdout)  # 標準出力へのログ出力
         ]
     )
     logger = logging.getLogger(__name__)
     
-    # Create CSV log filename with timestamp
+    # タイムスタンプ付きCSVログファイル名を作成
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_filename = f"detection_log_{timestamp}.csv"
     csv_path = log_dir / csv_filename
     
-    # Create CSV header
+    # CSVヘッダーを作成
     with open(csv_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(['filename', 'detected', 'count', 'time_ms'])
     
-    logger.info(f"Logging initialized. CSV log: {csv_path}")
+    logger.info(f"ログ初期化完了。CSVログ: {csv_path}")
     return logger, str(csv_path)
 
 
 def load_model(model_path: str, logger: logging.Logger) -> YOLO:
     """
-    Load YOLOv8 model for inference.
+    推論用のYOLOv8モデルを読み込みます。
     
     Args:
-        model_path: Path to model weights file
-        logger: Logger instance
+        model_path: モデル重みファイルのパス
+        logger: ロガーインスタンス
         
     Returns:
-        Loaded YOLO model
+        読み込まれたYOLOモデル
     """
     try:
-        logger.info(f"Loading YOLOv8 model: {model_path}")
+        logger.info(f"YOLOv8モデルを読み込み中: {model_path}")
         model = YOLO(model_path)
-        logger.info(f"Model loaded successfully. Classes: {len(model.names)}")
+        logger.info(f"モデルの読み込みが成功しました。クラス数: {len(model.names)}")
         return model
     except Exception as e:
-        logger.error(f"Failed to load model: {e}")
+        logger.error(f"モデルの読み込みに失敗しました: {e}")
         sys.exit(1)
 
 
 def get_image_files(input_dir: Path, logger: logging.Logger) -> List[Path]:
     """
-    Get all valid image files from input directory.
+    入力ディレクトリからすべての有効な画像ファイルを取得します。
     
     Args:
-        input_dir: Input directory path
-        logger: Logger instance
+        input_dir: 入力ディレクトリパス
+        logger: ロガーインスタンス
         
     Returns:
-        List of image file paths
+        画像ファイルパスのリスト
     """
+    # サポートする画像フォーマット
     valid_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif'}
     image_files = []
     
+    # 大文字・小文字両方の拡張子で検索
     for ext in valid_extensions:
         image_files.extend(input_dir.glob(f"*{ext}"))
         image_files.extend(input_dir.glob(f"*{ext.upper()}"))
     
-    image_files.sort()
-    logger.info(f"Found {len(image_files)} image files in {input_dir}")
+    image_files.sort()  # ファイル名でソート
+    logger.info(f"{input_dir} で {len(image_files)} 個の画像ファイルを発見")
     
     if not image_files:
-        logger.warning(f"No image files found in {input_dir}")
+        logger.warning(f"{input_dir} で画像ファイルが見つかりません")
     
     return image_files
 
@@ -115,49 +119,52 @@ def detect_objects(
     confidence_threshold: float = 0.25
 ) -> Tuple[np.ndarray, List[dict], bool]:
     """
-    Perform object detection on a single image.
+    単一の画像に対して物体検出を実行します。
     
     Args:
-        model: YOLO model instance
-        image_path: Path to input image
-        confidence_threshold: Minimum confidence for detections
+        model: YOLOモデルインスタンス
+        image_path: 入力画像のパス
+        confidence_threshold: 検出の最低信頼度
         
     Returns:
-        Tuple of (annotated_image, detections_list, has_detections)
+        (注釈付き画像、検出結果リスト、検出有無)のタプル
     """
-    # Load image
+    # 画像を読み込み
     image = cv2.imread(str(image_path))
     if image is None:
-        raise ValueError(f"Could not load image: {image_path}")
+        raise ValueError(f"画像を読み込めません: {image_path}")
     
-    # Perform inference with CPU device explicitly set
+    # CPUデバイスを明示的に指定して推論を実行
     results = model.predict(
-        source=image,
-        device='cpu',
-        conf=confidence_threshold,
-        verbose=False
+        source=image,                    # 入力画像
+        device='cpu',                    # CPUで推論を実行
+        conf=confidence_threshold,       # 信頼度闾値
+        verbose=False                    # 詳細ログを無効化
     )
     
     detections = []
     has_detections = False
     
-    # Process results
+    # 結果を処理
     for result in results:
-        # Get the annotated image
+        # 注釈付き画像を取得
         annotated_image = result.plot()
         
-        # Extract detection information
+        # 検出情報を抽出
         if result.boxes is not None and len(result.boxes) > 0:
             has_detections = True
             
-            boxes = result.boxes.xyxy.cpu().numpy()
-            classes = result.boxes.cls.cpu().numpy()
-            confidences = result.boxes.conf.cpu().numpy()
+            # バウンディングボックス、クラス、信頼度を取得
+            boxes = result.boxes.xyxy.cpu().numpy()        # バウンディングボックス座標
+            classes = result.boxes.cls.cpu().numpy()       # クラスID
+            confidences = result.boxes.conf.cpu().numpy()  # 信頼度
             
+            # 各検出結果を処理
             for box, cls, conf in zip(boxes, classes, confidences):
-                x1, y1, x2, y2 = map(int, box)
-                class_name = model.names[int(cls)]
+                x1, y1, x2, y2 = map(int, box)  # 座標を整数に変換
+                class_name = model.names[int(cls)]  # クラス名を取得
                 
+                # 検出情報を辞書として保存
                 detection = {
                     'class': class_name,
                     'confidence': float(conf),
@@ -165,7 +172,7 @@ def detect_objects(
                 }
                 detections.append(detection)
         else:
-            # No detections found, return original image
+            # 検出結果がない場合は元の画像を返す
             annotated_image = image
     
     return annotated_image, detections, has_detections
@@ -328,96 +335,98 @@ def process_images(
 
 
 def main():
-    """Main function to run the insect detection application."""
+    """昆虫検出アプリケーションを実行するメイン関数。"""
     parser = argparse.ArgumentParser(
-        description="Insect Detection Application using YOLOv8",
+        description="YOLOv8を使用した昆虫検出アプリケーション",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
+使用例:
   python detect_insect.py --input input_images/ --output output_images/
   python detect_insect.py --input input_images/ --output results/ --model yolov8s.pt
         """
     )
     
+    # 必須引数
     parser.add_argument(
         '--input',
         type=str,
         required=True,
-        help='Input directory containing images to process'
+        help='処理する画像を含む入力ディレクトリ'
     )
     
     parser.add_argument(
         '--output',
         type=str,
         required=True,
-        help='Output directory for processed images'
+        help='処理済み画像の出力ディレクトリ'
     )
     
+    # オプション引数
     parser.add_argument(
         '--model',
         type=str,
         default='yolov8n.pt',
-        help='Path to YOLOv8 model weights (default: yolov8n.pt)'
+        help='YOLOv8モデル重みファイルのパス (デフォルト: yolov8n.pt)'
     )
     
     parser.add_argument(
         '--conf',
         type=float,
         default=0.25,
-        help='Confidence threshold for detections (default: 0.25)'
+        help='検出の信頼度闾値 (デフォルト: 0.25)'
     )
     
     parser.add_argument(
         '--log-dir',
         type=str,
         default='logs',
-        help='Directory for log files (default: logs)'
+        help='ログファイル用ディレクトリ (デフォルト: logs)'
     )
     
     args = parser.parse_args()
     
-    # Convert to Path objects
+    # Pathオブジェクトに変換
     input_dir = Path(args.input)
     output_dir = Path(args.output)
     log_dir = Path(args.log_dir)
     
-    # Validate input directory
+    # 入力ディレクトリの検証
     if not input_dir.exists():
-        print(f"Error: Input directory '{input_dir}' does not exist")
+        print(f"エラー: 入力ディレクトリ '{input_dir}' が存在しません")
         sys.exit(1)
     
     if not input_dir.is_dir():
-        print(f"Error: '{input_dir}' is not a directory")
+        print(f"エラー: '{input_dir}' はディレクトリではありません")
         sys.exit(1)
     
-    # Setup logging
+    # ログ設定を初期化
     logger, csv_log_path = setup_logging(log_dir)
     
-    # Load model
+    # モデルを読み込み
     model = load_model(args.model, logger)
     
-    # Log model information
-    logger.info(f"Model classes: {list(model.names.values())}")
-    logger.info(f"Input directory: {input_dir}")
-    logger.info(f"Output directory: {output_dir}")
-    logger.info(f"Confidence threshold: {args.conf}")
+    # モデル情報をログ出力
+    logger.info(f"モデルクラス: {list(model.names.values())}")
+    logger.info(f"入力ディレクトリ: {input_dir}")
+    logger.info(f"出力ディレクトリ: {output_dir}")
+    logger.info(f"信頼度闾値: {args.conf}")
     
-    # Process images
+    # 画像を処理
     try:
         process_images(
-            model=model,
-            input_dir=input_dir,
-            output_dir=output_dir,
-            csv_log_path=csv_log_path,
-            logger=logger,
-            confidence_threshold=args.conf
+            model=model,                      # モデルインスタンス
+            input_dir=input_dir,              # 入力ディレクトリ
+            output_dir=output_dir,            # 出力ディレクトリ
+            csv_log_path=csv_log_path,        # CSVログパス
+            logger=logger,                    # ロガー
+            confidence_threshold=args.conf    # 信頼度闾値
         )
-        logger.info("Processing completed successfully")
+        logger.info("処理が成功しました")
     except KeyboardInterrupt:
-        logger.info("Processing interrupted by user")
+        logger.info("ユーザーによって処理が中断されました")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"Processing failed: {e}")
+        logger.error(f"処理が失敗しました: {e}")
         sys.exit(1)
 
 
