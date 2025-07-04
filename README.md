@@ -251,6 +251,12 @@ The trained model (`best.pt`) is derived from YOLOv8 (Ultralytics) and inherits 
 - **YOLOv8**: Ultralytics - AGPL-3.0 License
 - **Training Dataset**: z Algae Bilby - CC BY 4.0 License
 
+## 👨‍💻 Developer
+
+**Developed by**: Murasan201
+
+For more information about the developer and other projects, please visit: **https://murasan-net.com/**
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read the project guidelines in `CLAUDE.md` before contributing.
