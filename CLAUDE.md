@@ -182,6 +182,12 @@ python detect_insect.py --input input_images/ --output output_images/
 - **Hugging Face Model Hub**: Trained model weights with proper AGPL-3.0 attribution
 - **Book Integration**: Programmatic download via `huggingface_hub` library
 
+#### Fine-tuned Model Repository
+- **Model Location**: https://huggingface.co/Murasan/beetle-detection-yolov8
+- **License**: AGPL-3.0 (inherited from YOLOv8)
+- **Available Formats**: PyTorch (.pt), ONNX (.onnx)
+- **Performance**: mAP@0.5: 97.63%, mAP@0.5:0.95: 89.56%
+
 #### Prohibited Actions
 - ❌ Committing model files (*.pt, *.pth, *.onnx) to GitHub
 - ❌ Using Git LFS for model storage
@@ -194,7 +200,7 @@ python detect_insect.py --input input_images/ --output output_images/
 from huggingface_hub import hf_hub_download
 
 model_path = hf_hub_download(
-    repo_id="[username]/beetle-detection-yolov8",
+    repo_id="Murasan/beetle-detection-yolov8",
     filename="best.pt",
     local_dir="./weights"
 )

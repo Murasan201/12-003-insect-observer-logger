@@ -160,7 +160,7 @@ insect-detection-training/
 │   │   ├── images/            # 50 test images
 │   │   └── labels/            # 50 test labels (.txt)
 │   └── data.yaml              # YOLOv8 configuration file
-├── weights/                   # Trained model weights
+├── weights/                   # Local model weights (not committed to Git)
 └── training_results/          # Training logs and metrics
 ```
 
@@ -201,9 +201,15 @@ insect-detection-training/
 
 ### 11.3 Local Environment (Deployment Phase)
 6. **Model Deployment**  
-   - Download trained weights from Colab  
+   - Download trained weights from Hugging Face Model Hub
    - Integrate with local detection application  
-   - Test inference performance on local CPU  
+   - Test inference performance on local CPU
+
+### 11.3.1 Fine-tuned Model Distribution
+- **Repository**: https://huggingface.co/Murasan/beetle-detection-yolov8
+- **License**: AGPL-3.0 (inherited from YOLOv8)
+- **Available Formats**: PyTorch (.pt), ONNX (.onnx)
+- **Performance Metrics**: mAP@0.5: 97.63%, mAP@0.5:0.95: 89.56%  
 
 ### 11.4 Development Workflow Benefits
 - **GPU Acceleration**: Faster training (hours vs days)  

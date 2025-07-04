@@ -417,17 +417,25 @@ pip3 install -r requirements.txt
 ### 10.1 Training Outputs
 
 #### 10.1.1 Model Files
-- **best.pt**: Best performing model weights
-- **last.pt**: Final epoch weights
+- **best.pt**: Best performing model weights (locally stored)
+- **last.pt**: Final epoch weights (locally stored)
 - **Model exports**: ONNX, TorchScript formats
 
-#### 10.1.2 Visualization Files
+#### 10.1.2 Model Distribution
+- **Public Repository**: https://huggingface.co/Murasan/beetle-detection-yolov8
+- **License**: AGPL-3.0 (inherited from YOLOv8)
+- **Available Formats**: 
+  - PyTorch format (best.pt, 6.26MB)
+  - ONNX format (best.onnx, 12.3MB)
+- **Performance Metrics**: mAP@0.5: 97.63%, mAP@0.5:0.95: 89.56%
+
+#### 10.1.3 Visualization Files
 - **results.png**: Training/validation curves
 - **confusion_matrix.png**: Classification performance matrix
 - **labels.jpg**: Ground truth label distribution
 - **predictions.jpg**: Model prediction samples
 
-#### 10.1.3 Log Files
+#### 10.1.4 Log Files
 - **Training logs**: Timestamped training progress
 - **CSV metrics**: Epoch-by-epoch performance data
 - **System logs**: Hardware utilization and errors
