@@ -2,11 +2,33 @@
 
 ## Project Requirements
 
+### Base Project Information
+- **Base Repository**: https://github.com/Murasan201/insect-detection-training
+- **Current Repository**: https://github.com/Murasan201/12-002-insect-observer-logger
+- **Project Evolution**: This project extends the base insect detection system to add activity monitoring capabilities
+
+### Current Project Scope
+- **Primary Goal**: Develop an insect activity measurement application based on the existing detection system
+- **Extension Features**: Add logging, monitoring, and analysis capabilities for insect behavior observation
+- **Target Application**: Real-time or batch processing of insect activity data with quantitative metrics
+
 ### Requirements Specification
-- **Project requirements are defined in**: `insect_detection_training_project_requirements_spec.md`
-- **MUST review this document before starting any work**
-- Contains detailed functional and non-functional requirements
+- **Base requirements defined in**: `insect_detection_application_test_project_requirements_spec.md`
+- **Current project requirements defined in**: `12-002_昆虫自動観察＆ログ記録アプリ_要件定義書.md`
+- **MUST review both documents before starting any work**
+- Base document contains detailed functional and non-functional requirements for the detection system
+- Current document contains specific requirements for insect activity monitoring and logging application
 - Provides context for all development decisions
+
+### Basic Design Documents
+- **System Architecture Design**: `system_architecture_design.md` - Overall system structure and component relationships
+- **Hardware Design**: `hardware_design.md` - Hardware specifications, electrical design, and physical configuration
+- **Software Design**: `software_design.md` - Software modules, APIs, classes, and implementation details
+- **Data Design**: `data_design.md` - Data models, file formats, quality management, and lifecycle policies
+- **Interface Design**: `interface_design.md` - User interfaces, module APIs, external integrations, and hardware interfaces
+- **MUST review these design documents before implementation**
+- All design documents are written in Japanese with English filenames
+- These documents provide comprehensive technical specifications for the development phase
 
 ## Project Structure
 
