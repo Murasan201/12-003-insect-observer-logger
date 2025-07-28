@@ -13,36 +13,68 @@
 - **Target Application**: Real-time or batch processing of insect activity data with quantitative metrics
 
 ### Requirements Specification
-- **Base requirements defined in**: `insect_detection_application_test_project_requirements_spec.md`
-- **Current project requirements defined in**: `12-002_昆虫自動観察＆ログ記録アプリ_要件定義書.md`
+- **Base requirements defined in**: `docs/requirements/insect_detection_application_test_project_requirements_spec.md`
+- **Current project requirements defined in**: `docs/requirements/12-002_昆虫自動観察＆ログ記録アプリ_要件定義書.md`
 - **MUST review both documents before starting any work**
 - Base document contains detailed functional and non-functional requirements for the detection system
 - Current document contains specific requirements for insect activity monitoring and logging application
 - Provides context for all development decisions
 
-### Basic Design Documents
-- **System Architecture Design**: `system_architecture_design.md` - Overall system structure and component relationships
-- **Hardware Design**: `hardware_design.md` - Hardware specifications, electrical design, and physical configuration
-- **Software Design**: `software_design.md` - Software modules, APIs, classes, and implementation details
-- **Data Design**: `data_design.md` - Data models, file formats, quality management, and lifecycle policies
-- **Interface Design**: `interface_design.md` - User interfaces, module APIs, external integrations, and hardware interfaces
-- **MUST review these design documents before implementation**
+### Design Documents Structure
+- **All design documents are organized under `docs/design/` following the standard document management structure**
+- **Document Management Standard**: Follow `docs/document_management_standards.md` for all documentation work
+- **Basic Design Documents** (under `docs/design/basic_design/`):
+  - System Architecture Design - Overall system structure and component relationships
+  - Hardware Design - Hardware specifications, electrical design, and physical configuration
+  - Data Design - Data models, file formats, quality management, and lifecycle policies
+  - Interface Design - User interfaces, module APIs, external integrations, and hardware interfaces
+- **Detailed Design Documents** (under `docs/design/detailed_design/`):
+  - Software Design - Software modules, APIs, classes, and implementation details
+  - Class Diagram Design - PlantUML class diagrams and relationships
+- **MUST review both basic and detailed design documents before implementation**
 - All design documents are written in Japanese with English filenames
 - These documents provide comprehensive technical specifications for the development phase
 
 ## Project Structure
 
 ```
-insect-detection-cpu-test/
-├── detect_insect.py          # Main detection script
-├── requirements.txt          # Python dependencies
-├── .gitignore               # Git ignore rules
-├── README.md                # Project documentation
-├── RULES.md                 # This file
-├── input_images/            # Input directory (not tracked)
-├── output_images/           # Output directory (not tracked)
-├── logs/                    # Log files (not tracked)
-└── weights/                 # Model weights (not tracked)
+12-002-insect-observer-logger/
+├── CLAUDE.md                # Project rules and guidelines (this file)
+├── LICENSE                  # Project license
+├── requirements.txt         # Python dependencies
+├── detect_insect.py         # Legacy detection script
+├── detector.py              # New detection module
+├── train_yolo.py           # Training script
+├── book_integration.py     # Book integration utilities
+├── yolov8_training_colab.ipynb # Training notebook
+├── docs/                   # ★ All documentation (following standard structure)
+│   ├── index.md            # Document index
+│   ├── README.md           # Documentation guide
+│   ├── document_management_standards.md # ★ Standard documentation rules
+│   ├── requirements/       # Requirements documents
+│   ├── specifications/     # System specifications
+│   ├── design/            # Design documents
+│   │   ├── basic_design/  # Basic design documents
+│   │   └── detailed_design/ # Detailed design documents
+│   ├── deployment/        # Deployment guides
+│   ├── operations/        # Operations guides
+│   ├── testing/           # Test documents
+│   ├── research/          # Research materials
+│   └── references/        # Reference materials
+├── models/                # ★ Data model classes
+│   ├── detection_models.py
+│   ├── activity_models.py
+│   └── system_models.py
+├── config/                # ★ Configuration management
+│   ├── config_manager.py
+│   └── system_config.json
+├── utils/                 # ★ Utility modules
+│   ├── data_validator.py
+│   └── file_naming.py
+├── input_images/          # Input directory (not tracked)
+├── output_images/         # Output directory (not tracked)
+├── logs/                  # Log files (not tracked)
+└── weights/               # Model weights (not tracked)
 ```
 
 ## Coding Standards
@@ -230,11 +262,26 @@ model_path = hf_hub_download(
 
 ## Documentation
 
+### Document Management Standards
+- **MUST follow the standards defined in `docs/document_management_standards.md`**
+- All documentation MUST be organized under the `docs/` directory structure
+- Use standardized naming conventions for all documents
+- Separate basic design documents from detailed design documents
+- Maintain document index and cross-references
+
 ### Code Documentation
 - Include module-level docstrings
 - Document all public functions
 - Explain complex algorithms
 - Provide usage examples
+
+### Project Documentation Structure
+- **Document Index**: `docs/index.md` - Central reference for all documents
+- **Requirements**: Store in `docs/requirements/` directory
+- **Basic Design**: Store in `docs/design/basic_design/` directory
+- **Detailed Design**: Store in `docs/design/detailed_design/` directory
+- **Deployment Guides**: Store in `docs/deployment/` directory
+- **Operations Guides**: Store in `docs/operations/` directory
 
 ### Project Documentation
 - Keep README.md updated
@@ -242,6 +289,7 @@ model_path = hf_hub_download(
 - Document installation steps
 - Provide usage examples
 - Include troubleshooting guide
+- **All technical documents must follow the document management standards**
 
 ## Information Search Guidelines
 
