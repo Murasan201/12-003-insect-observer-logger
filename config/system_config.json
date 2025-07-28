@@ -1,0 +1,36 @@
+{
+  "config_metadata": {
+    "config_version": "1.0.0",
+    "last_updated": "2025-07-27T08:00:00+09:00",
+    "updated_by": "system_admin",
+    "schema_version": "1.0"
+  },
+  "system": {
+    "detection_interval_seconds": 60,
+    "log_level": "INFO",
+    "data_retention_days": 365,
+    "auto_cleanup_enabled": true
+  },
+  "hardware": {
+    "camera": {
+      "resolution_width": 1920,
+      "resolution_height": 1080,
+      "fps": 30
+    },
+    "ir_led": {
+      "brightness": 0.8,
+      "pwm_frequency": 1000
+    }
+  },
+  "detection": {
+    "model_path": "./weights/beetle_detection_v1.pt",
+    "confidence_threshold": 0.5,
+    "nms_threshold": 0.4,
+    "max_detections_per_frame": 10
+  },
+  "analysis": {
+    "movement_threshold_pixels": 5.0,
+    "outlier_detection_enabled": true,
+    "outlier_threshold_sigma": 3.0
+  }
+}
