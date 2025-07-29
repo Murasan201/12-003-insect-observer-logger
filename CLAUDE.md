@@ -290,6 +290,7 @@ model_path = hf_hub_download(
 - Provide usage examples
 - Include troubleshooting guide
 - **All technical documents must follow the document management standards**
+- **Implementation progress is tracked in `docs/README.md`** - Contains completed phases and next steps
 
 ## Information Search Guidelines
 

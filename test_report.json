@@ -1,0 +1,27 @@
+{
+  "test_datetime": "2025-07-28 16:59:16",
+  "python_version": "3.10.12",
+  "working_directory": "/home/win/work/projetct/kodansya/12-002-insect-observer-logger",
+  "tests": {
+    "basic_cli": {
+      "description": "基本CLI機能",
+      "result": "FAIL",
+      "success": false
+    },
+    "system_status": {
+      "description": "システム状態機能",
+      "result": "FAIL",
+      "success": false
+    },
+    "batch_runner": {
+      "description": "バッチランナー機能",
+      "result": "FAIL",
+      "success": false
+    },
+    "config_structure": {
+      "description": "設定・ディレクトリ構造",
+      "result": "PASS",
+      "success": true
+    }
+  }
+}

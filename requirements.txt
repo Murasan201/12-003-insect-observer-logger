@@ -16,6 +16,11 @@ Pillow>=9.0.0
 # Logging and Utilities
 tqdm>=4.65.0
 
+# CLI Enhancement (Phase 7)
+click>=8.0.0
+rich>=13.0.0
+schedule>=1.2.0
+
 # Optional: Development tools
 pytest>=7.0.0
 black>=23.0.0

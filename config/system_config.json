@@ -9,7 +9,25 @@
     "detection_interval_seconds": 60,
     "log_level": "INFO",
     "data_retention_days": 365,
-    "auto_cleanup_enabled": true
+    "auto_cleanup_enabled": true,
+    "error_handling": {
+      "max_error_history": 1000,
+      "alert_threshold": 10,
+      "retry_strategies": {
+        "network": {"max_retries": 3, "backoff_seconds": 1.0},
+        "hardware": {"max_retries": 2, "backoff_seconds": 2.0},
+        "detection": {"max_retries": 3, "backoff_seconds": 0.5}
+      }
+    },
+    "monitoring": {
+      "monitoring_interval": 30.0,
+      "metrics_interval": 10.0,
+      "health_check_interval": 60.0,
+      "alert_cpu_threshold": 80.0,
+      "alert_memory_threshold": 85.0,
+      "alert_disk_threshold": 90.0,
+      "alert_temperature_threshold": 80.0
+    }
   },
   "hardware": {
     "camera": {
