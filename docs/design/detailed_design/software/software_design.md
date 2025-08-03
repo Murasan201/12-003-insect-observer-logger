@@ -1412,6 +1412,148 @@ class MaintenanceSupport:
 
 ## 8. テスト設計
 
+### 8.0 テストモジュール
+
+#### 8.0.1 カメラ検出テストモジュール (test_camera_detection.py)
+
+**概要**  
+リアルタイムカメラ入力による物体検出機能の単体テストを行うスタンドアロンモジュール。
+
+**目的**  
+- YOLOv8モデルのリアルタイム性能検証
+- カメラハードウェアとの統合確認
+- 検出精度とフレームレートの評価
+- CPUベース処理の性能限界測定
+
+**使用方法**
+```bash
+# 基本的な使用方法
+python test_camera_detection.py
+
+# カスタムモデルでのテスト
+python test_camera_detection.py --model weights/best.pt
+
+# 異なるカメラIDの指定（複数カメラ接続時）
+python test_camera_detection.py --camera 1
+
+# 信頼度閾値の調整
+python test_camera_detection.py --conf 0.5
+
+# 全パラメータ指定
+python test_camera_detection.py --model weights/custom_model.pt --camera 0 --conf 0.3
+```
+
+**コマンドラインオプション**
+| オプション | 説明 | デフォルト値 | 備考 |
+|-----------|------|-------------|------|
+| --model | YOLOv8モデルファイルパス | yolov8n.pt | .ptファイルまたはUltralytics提供モデル名 |
+| --camera | カメラデバイスID | 0 | 0: デフォルトカメラ、1以降: 追加カメラ |
+| --conf | 検出信頼度閾値 | 0.25 | 0.0～1.0の範囲、低いほど多く検出 |
+
+**出力情報**
+1. **リアルタイム表示**
+   - 検出結果を含む注釈付き映像
+   - フレーム番号、処理時間、FPS情報
+   - バウンディングボックスとクラス名・信頼度
+
+2. **コンソール出力**
+   - 各フレームの検出結果詳細
+   - 処理時間とFPS
+   - エラーメッセージ（発生時）
+
+3. **終了時サマリー**
+   - 総フレーム数
+   - 平均処理時間
+   - 平均FPS
+
+**実装仕様**
+```python
+# 主要機能
+- カメラ初期化とフレーム取得
+- YOLOv8モデルによるリアルタイム推論
+- 検出結果の可視化（OpenCV使用）
+- 性能メトリクスの計算と表示
+- キーボード入力による終了制御（'q'キー）
+
+# エラーハンドリング
+- カメラオープン失敗時の適切な終了
+- モデル読み込みエラーの検出
+- フレーム取得失敗時の継続処理
+```
+
+**テストシナリオ例**
+1. **基本動作確認**
+   ```bash
+   # デフォルト設定での動作確認
+   python test_camera_detection.py
+   ```
+
+2. **カスタムモデル性能評価**
+   ```bash
+   # 昆虫検出専用モデルでのテスト
+   python test_camera_detection.py --model weights/beetle_detector.pt --conf 0.4
+   ```
+
+3. **複数カメラ切り替えテスト**
+   ```bash
+   # USBカメラでのテスト（カメラID: 1）
+   python test_camera_detection.py --camera 1
+   ```
+
+**注意事項**
+- Raspberry Pi上でのCPU処理のため、フレームレートは制限される
+- カメラ解像度により処理時間が変動する
+- 長時間実行時はCPU温度に注意が必要
+- 十分な照明環境での使用を推奨
+
+#### 8.0.2 実用カメラテストモジュール群
+
+**概要**  
+Raspberry Pi Camera Module 3とYOLOv8の互換性問題を解決した実用的なテストモジュール群。
+
+**開発されたモジュール**
+
+1. **test_libcamera_yolo.py** - ファイルベース検出モジュール
+   - libcamera-stillを使用した画像撮影
+   - YOLOv8による物体検出処理
+   - 連続撮影・検出をサポート
+   - 安定した動作を保証
+
+2. **test_simple_realtime.py** - リアルタイム表示モジュール **（推奨）**
+   - デスクトップ環境でのリアルタイム表示
+   - libcamera-stillの高速連続実行
+   - OpenCVによる検出結果の可視化
+   - 2-5 FPS での安定動作
+
+3. **test_realtime_display.py** - 高性能ストリーミングモジュール
+   - libcamera-vidのストリーミング処理
+   - より高いFPSが可能
+   - 実装が複雑だが高性能
+
+**技術的解決事項**
+- Raspberry Pi Camera Module 3のlibcameraスタック対応
+- OpenCVとの互換性問題の回避
+- numpy互換性エラーの解決
+- システムPython環境での安定動作
+
+**実行環境要件**
+- システムPython環境（仮想環境使用不可）
+- デスクトップ環境またはX11転送
+- ultralytics パッケージのシステムレベルインストール
+
+**動作確認済み構成**
+- **ハードウェア**: Raspberry Pi + Camera Module 3 NoIR (imx708_noir)
+- **OS**: Raspberry Pi OS (Debian 12ベース)
+- **Python**: 3.11
+- **YOLOv8**: ultralytics 8.3.173
+- **OpenCV**: 4.12.0 (システム: 4.6.0)
+
+**パフォーマンス実測値**
+- 平均推論時間: 400-700ms (CPU処理)
+- 実用FPS: 2-5 FPS
+- 検出精度: 標準YOLOv8n性能
+- メモリ使用量: 安定
+
 ### 8.1 テスト戦略
 
 #### 8.1.1 テストレベル定義
