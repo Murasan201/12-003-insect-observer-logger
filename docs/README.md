@@ -178,6 +178,60 @@
      - Phase 6: `error_handler.py`, `monitoring.py`
      - Phase 7: `cli.py`, `batch_runner.py`
 
+### 🆕 シンプル観測アプリケーション (simple_observer.py)
+
+**概要**: 既存システムを変更せずに追加された軽量観測ツール
+
+#### 新規追加ファイル
+- **`simple_observer.py`** - シンプル継続観測アプリケーション
+  - 既存の`insect_detector.py`を内部で呼び出し
+  - CSV形式での観測データ自動保存
+  - コマンドライン引数による簡単設定
+  - Ctrl+Cによる安全停止機能
+- **`simple_observer_usage.md`** - 詳細な使用ガイド
+  - コマンドライン引数の説明
+  - CSV出力フォーマット仕様
+  - 実行例とトラブルシューティング
+
+#### 関連ドキュメント
+- **ソフトウェア設計書**: [`software/software_design.md`](design/detailed_design/software/software_design.md) 第9章
+  - SimpleObserverクラス設計
+  - データ構造・処理フロー設計
+  - 性能・品質要件・拡張性設計
+- **詳細設計書**: [`processing/simple_observer_processing_spec.md`](design/detailed_design/processing/simple_observer_processing_spec.md)
+  - 全12関数の詳細仕様（入力・出力・例外処理）
+  - ObservationRecordデータ構造
+  - 処理フロー図（アプリケーション全体・観測ループ・エラー処理）
+  - 実装メモ・パフォーマンス考慮事項
+
+#### 使用方法
+```bash
+# 基本実行（60秒間隔、無制限）
+python simple_observer.py
+
+# カスタム設定（30秒間隔、1時間観測）
+python simple_observer.py --interval 30 --duration 3600
+
+# 出力先指定
+python simple_observer.py --output-dir ./my_observations
+```
+
+#### CSV出力データ
+8列のデータ構造で観測結果を記録：
+- `timestamp`: 観測時刻（ISO形式）
+- `detection_count`: 検出昆虫数
+- `has_detection`: 検出有無（True/False）
+- `confidence_avg`: 平均信頼度
+- `x_center_avg`, `y_center_avg`: 座標平均値
+- `processing_time_ms`: 処理時間（ミリ秒）
+- `observation_number`: 観測連番
+
+#### 設計思想
+- **既存システム保護**: main.py、insect_detector.py完全無変更
+- **シンプル操作**: 最小限のコマンドライン引数
+- **堅牢性**: エラー発生時の観測継続
+- **データ完整性**: CSV書き込みの確実性保証
+
 **注意事項:**
 - モデルファイルはHugging Face からダウンロード（GitHub未格納）
 - ハードウェアはRaspberry Pi + Camera V3 NoIR + IR LED HAT構成
@@ -188,6 +242,10 @@
 
 | 日付 | 内容 | 更新者 |
 |------|------|--------|
+| 2025-08-13 | **simple_observer.py 追加・包括的ドキュメント整備** | 開発チーム |
+| 2025-08-13 | シンプル観測アプリケーション実装・使用ガイド作成 | 開発チーム |
+| 2025-08-13 | ソフトウェア設計書第9章・詳細設計書作成完了 | 開発チーム |
+| 2025-08-13 | Phase 7 CLI処理説明書・機能仕様書作成完了 | 開発チーム |
 | 2025-07-29 | **Phase 6完了・全Phase実装完了** | 開発チーム |
 | 2025-07-29 | エラーハンドリング・モニタリング強化機能実装 | 開発チーム |
 | 2025-07-28 | Phase 3処理説明書作成完了（検出機能3ファイル） | 開発チーム |
