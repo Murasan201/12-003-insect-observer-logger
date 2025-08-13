@@ -42,15 +42,21 @@
 ├── CLAUDE.md                # Project rules and guidelines (this file)
 ├── LICENSE                  # Project license
 ├── requirements.txt         # Python dependencies
-├── detect_insect.py         # Legacy detection script
+├── detect_insect.py         # Legacy detection script (batch processing)
 ├── detector.py              # New detection module
 ├── train_yolo.py           # Training script
 ├── book_integration.py     # Book integration utilities
 ├── yolov8_training_colab.ipynb # Training notebook
+├── test_camera_detection.py  # Camera-based detection test module
+├── test_simple_realtime.py   # Real-time detection with desktop display
+├── test_libcamera_yolo.py    # File-based detection with libcamera
+├── test_*.py                # Other camera test modules
+├── run_test_camera.sh       # Camera test wrapper script
 ├── docs/                   # ★ All documentation (following standard structure)
 │   ├── index.md            # Document index
 │   ├── README.md           # Documentation guide
 │   ├── document_management_standards.md # ★ Standard documentation rules
+│   ├── troubleshooting.md  # ★ Troubleshooting guide for camera issues
 │   ├── requirements/       # Requirements documents
 │   ├── specifications/     # System specifications
 │   ├── design/            # Design documents
@@ -76,6 +82,14 @@
 ├── logs/                  # Log files (not tracked)
 └── weights/               # Model weights (not tracked)
 ```
+
+## Test Modules
+
+### Camera Detection Test Module
+- **File**: `test_camera_detection.py`
+- **Purpose**: Single-function test script for real-time object detection using camera input
+- **Usage**: For testing and validating YOLOv8 model performance with live camera feed
+- **Detailed Usage**: See `software_design.md` for comprehensive usage instructions and parameters
 
 ## Coding Standards
 
@@ -296,6 +310,7 @@ model_path = hf_hub_download(
 ## Information Search Guidelines
 
 ### Web Search Usage
+- **ALWAYS use `mcp__gemini-google-search__google_search` for web searches** (MCP Google search agent)
 - Use `mcp__gemini-google-search__google_search` when latest information is needed
 - Search for current library versions, API changes, or recent documentation
 - Use web search when local information is insufficient or outdated
