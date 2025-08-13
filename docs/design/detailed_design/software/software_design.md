@@ -1643,6 +1643,246 @@ class PerformanceTest:
 
 ---
 
-*文書バージョン: 1.0*  
-*最終更新日: 2025-07-25*  
+## 9. シンプル観測モジュール (simple_observer.py)
+
+### 9.1 モジュール概要
+
+#### 9.1.1 目的と役割
+```
+モジュール名: simple_observer.py
+役割: 既存検出器を活用したシンプルな継続観測
+対象ユーザー: 簡単操作を求める初心者・研究者
+設計方針: 既存システム無変更、最小限の設定、直感的操作
+```
+
+#### 9.1.2 アーキテクチャ位置づけ
+```
+┌─────────────────────────────────────────┐
+│          シンプル観測システム           │
+├─────────────────────────────────────────┤
+│ simple_observer.py (新規追加)           │
+│  ↓ 内部呼び出し                        │
+│ insect_detector.py (既存・無変更)       │
+│  ↓ 利用                                │
+│ hardware_controller.py (既存・無変更)   │
+└─────────────────────────────────────────┘
+```
+
+### 9.2 クラス設計
+
+#### 9.2.1 SimpleObserver クラス
+```python
+class SimpleObserver:
+    """シンプル昆虫観測クラス
+    
+    既存のInsectDetectorを利用して継続的な観測を実行し、
+    結果をCSV形式で保存する軽量観測システム。
+    """
+    
+    def __init__(self, interval: int = 60, 
+                 duration: Optional[int] = None,
+                 output_dir: str = "./simple_logs"):
+        """初期化
+        
+        Args:
+            interval: 観測間隔（秒）
+            duration: 観測時間（秒、Noneで無制限）
+            output_dir: 出力ディレクトリパス
+        """
+        
+    def initialize(self) -> bool:
+        """観測システム初期化
+        
+        Returns:
+            bool: 初期化成功可否
+        """
+        
+    def start_observation(self) -> None:
+        """観測開始・メインループ実行"""
+        
+    def _perform_single_observation(self) -> Optional[Dict[str, Any]]:
+        """単一観測実行
+        
+        Returns:
+            Optional[Dict[str, Any]]: 観測結果データ
+        """
+        
+    def _save_observation_to_csv(self, data: Dict[str, Any]) -> None:
+        """観測結果CSV保存"""
+        
+    def stop(self) -> None:
+        """観測停止・リソースクリーンアップ"""
+        
+    def get_status(self) -> Dict[str, Any]:
+        """現在状態取得
+        
+        Returns:
+            Dict[str, Any]: 状態情報辞書
+        """
+```
+
+### 9.3 データ設計
+
+#### 9.3.1 CSV出力フォーマット
+```python
+@dataclass
+class ObservationRecord:
+    """観測記録データクラス"""
+    timestamp: str              # 観測時刻 (ISO形式)
+    detection_count: int        # 検出昆虫数
+    has_detection: bool         # 検出有無フラグ
+    confidence_avg: float       # 平均信頼度
+    x_center_avg: float         # X座標平均値
+    y_center_avg: float         # Y座標平均値
+    processing_time_ms: float   # 処理時間 (ミリ秒)
+    observation_number: int     # 観測連番
+```
+
+#### 9.3.2 CSV出力例
+```csv
+timestamp,detection_count,has_detection,confidence_avg,x_center_avg,y_center_avg,processing_time_ms,observation_number
+2025-07-29T20:30:05.123456,2,True,0.785,425.3,320.8,1205.3,1
+2025-07-29T20:31:05.456789,0,False,0.0,0.0,0.0,890.1,2
+2025-07-29T20:32:05.789012,1,True,0.923,680.1,240.5,1150.8,3
+```
+
+### 9.4 実行フロー設計
+
+#### 9.4.1 メイン処理フロー
+```
+[アプリケーション開始]
+        │
+        ▼
+    ┌─────────┐
+    │ 初期化   │ ←── ・CSV設定
+    │ 処理    │     ・検出器初期化
+    └─────────┘     ・ログ設定
+        │
+        ▼
+    ┌─────────┐
+    │ 観測     │ ←── interval秒間隔での実行
+    │ ループ   │     duration時間まで継続
+    └─────────┘
+        │
+        ▼
+    ┌─────────┐
+    │ 単一     │ ←── ・insect_detector呼び出し
+    │ 観測     │     ・結果データ集計
+    └─────────┘     ・CSV保存
+        │
+        ▼
+    ┌─────────┐
+    │ 停止     │ ←── ・リソース解放
+    │ 処理     │     ・統計表示
+    └─────────┘
+```
+
+#### 9.4.2 エラーハンドリング
+```python
+def _error_handling_strategy():
+    """エラー処理戦略
+    
+    1. 個別観測失敗: ログ出力後、次回観測継続
+    2. 初期化失敗: アプリケーション終了
+    3. CSV書き込み失敗: エラーログ出力、観測継続
+    4. ユーザー中断 (Ctrl+C): 安全停止処理
+    5. システムリソース不足: 警告ログ、継続試行
+    """
+```
+
+### 9.5 インターフェース設計
+
+#### 9.5.1 コマンドライン引数
+```bash
+python simple_observer.py [OPTIONS]
+
+OPTIONS:
+  --interval INTEGER    観測間隔（秒） [default: 60]
+  --duration INTEGER    観測時間（秒） [default: unlimited]
+  --output-dir TEXT     出力ディレクトリ [default: ./simple_logs]
+  --help               ヘルプ表示
+```
+
+#### 9.5.2 出力ファイル
+```
+output_directory/
+├── observations_YYYYMMDD_HHMMSS.csv  # 観測データ
+├── observer_YYYYMMDD_HHMMSS.log      # 実行ログ
+└── detection_images/                 # 検出画像 (既存機能)
+    ├── detection_YYYYMMDD_HHMMSS_001.png
+    └── detection_YYYYMMDD_HHMMSS_002.png
+```
+
+### 9.6 性能・品質要件
+
+#### 9.6.1 性能要件
+| 項目 | 要件値 | 測定条件 |
+|------|--------|----------|
+| 観測間隔精度 | ±2秒以内 | 60秒間隔設定時 |
+| メモリ使用量 | 100MB以下 | 24時間連続実行時 |
+| CSV書き込み時間 | 10ms以下 | 1レコード書き込み |
+| 起動時間 | 10秒以内 | モデル読み込み含む |
+
+#### 9.6.2 信頼性要件
+```python
+reliability_requirements = {
+    "検出器初期化失敗許容率": "0%",
+    "個別観測失敗許容率": "5%以下",
+    "CSV書き込み失敗許容率": "1%以下",
+    "24時間連続稼働成功率": "99%以上",
+    "データ整合性": "100%"
+}
+```
+
+### 9.7 設定管理
+
+#### 9.7.1 検出器設定
+```python
+DETECTOR_SETTINGS = {
+    "model_path": "./weights/beetle_detection.pt",
+    "confidence_threshold": 0.5,
+    "device": "cpu",
+    "save_detection_images": True,
+    "save_detection_logs": False  # CSV形式で独自保存
+}
+```
+
+#### 9.7.2 観測設定
+```python
+OBSERVATION_SETTINGS = {
+    "default_interval": 60,        # デフォルト観測間隔（秒）
+    "max_duration": 86400 * 7,     # 最大観測時間（1週間）
+    "csv_flush_interval": 1,       # CSV書き込み頻度
+    "log_level": "INFO",           # ログレベル
+    "enable_ir_led": True          # IR LED使用可否
+}
+```
+
+### 9.8 拡張性設計
+
+#### 9.8.1 将来拡張ポイント
+```python
+future_extensions = {
+    "複数観測間隔": "時間帯別の観測間隔設定",
+    "データフィルタリング": "信頼度による自動フィルタ",
+    "リアルタイム可視化": "Web UI での観測状況表示",
+    "アラート機能": "異常検出時の通知機能",
+    "バックアップ機能": "自動データバックアップ"
+}
+```
+
+#### 9.8.2 モジュール分離性
+```
+SimpleObserver (独立性確保)
+├── 既存システムへの影響: なし
+├── 単独実行可能性: あり
+├── 設定変更による影響範囲: 限定的
+└── 将来的な機能追加: 容易
+```
+
+---
+
+*文書バージョン: 1.1*  
+*最終更新日: 2025-08-13*  
+*更新内容: simple_observer.py モジュール仕様追加*  
 *承認者: 開発チーム*

@@ -220,6 +220,7 @@ python detect_insect.py --input input_images/ --output output_images/
 - Temporary files
 - Python cache files
 - **Dataset files (datasets/, *.jpg, *.png, *.txt, data.yaml)**
+- **dev-memo.md** - Personal development memo (not tracked)
 
 ### Model File Distribution Policy
 
