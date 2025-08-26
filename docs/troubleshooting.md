@@ -229,11 +229,78 @@ ModuleNotFoundError: No module named 'ultralytics'
 
 ---
 
+## Camera Module 3 Wide 互換性問題
+
+### 問題5: Camera Module 3 WideでOpenCVがフレーム取得に失敗
+
+**症状:**
+```
+モデルを読み込み中: yolov8n.pt
+モデルの読み込みが成功しました。クラス数: 80
+カメラ 0 を初期化中...
+カメラ解像度: 640x480 @ -1fps
+カメラの初期化を待っています...
+エラー: カメラからフレームを取得できませんでした
+```
+- OpenCVでカメラは開けるがフレームが黒画面
+- 文字化け表示（UTF-8エンコーディング問題）
+- FPS取得エラー: `Unable to get camera FPS`
+
+**原因:**
+1. **カメラスタックの非互換性**
+   - Camera Module 3 Wide: libcameraスタック（新）
+   - OpenCV (cv2.VideoCapture): V4L2/GStreamer期待（旧）
+   
+2. **解像度の不一致**
+   - GStreamerパイプラインが640×480固定
+   - Camera Module 3 Wideのネイティブ解像度:
+     - 1536×864 (120fps)
+     - 2304×1296 (56fps)
+     - 4608×2592 (14fps)
+
+3. **libcameraとOpenCVのブリッジ問題**
+   - Raspberry Pi OSがlibcameraに移行
+   - OpenCVは旧V4L2インターフェース期待
+
+**解決方法: Picamera2を使用**
+
+1. **新しいスクリプト作成**
+   ```bash
+   # test_camera_detection_picamera2.py を作成
+   # Picamera2を使用してCamera Module 3 Wideに直接アクセス
+   ```
+
+2. **実行コマンド**
+   ```bash
+   # デフォルト設定（1536×864）
+   python test_camera_detection_picamera2.py
+   
+   # 高解像度
+   python test_camera_detection_picamera2.py --width 2304 --height 1296
+   
+   # SSHからヘッドレス実行
+   python test_camera_detection_picamera2.py --no-display
+   ```
+
+**技術的詳細:**
+- **Picamera2**: libcameraの公式Pythonラッパー
+- **直接アクセス**: Camera Module 3シリーズ専用設計
+- **自動ネゴシエーション**: 解像度の自動調整機能
+- **NumPy互換**: YOLOv8と直接連携可能
+
+**重要:** Camera Module 3 WideではOpenCVの代わりにPicamera2を使用することが推奨されます。
+
+---
+
 ## ハードウェア情報
 
 ### 確認されたカメラ
-- **デバイス:** Raspberry Pi Camera Module 3 NoIR
-- **センサー:** imx708_noir [4608x2592 10-bit RGGB]
+- **デバイス:** 
+  - Raspberry Pi Camera Module 3 NoIR
+  - Raspberry Pi Camera Module 3 Wide NoIR（広角タイプ）
+- **センサー:** 
+  - imx708_noir [4608x2592 10-bit RGGB]
+  - imx708_wide_noir [4608x2592 10-bit RGGB]
 - **接続:** CSI接続（/base/axi/pcie@1000120000/rp1/i2c@88000/imx708@1a）
 
 ### 利用可能なモード
@@ -330,4 +397,4 @@ ModuleNotFoundError: No module named 'ultralytics'
 
 ---
 
-*最終更新日: 2025-08-03*
+*最終更新日: 2025-08-26*

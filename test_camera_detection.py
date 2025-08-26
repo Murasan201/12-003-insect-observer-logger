@@ -21,7 +21,7 @@ import numpy as np
 from ultralytics import YOLO
 
 
-def test_camera_detection(model_path: str = 'yolov8n.pt', camera_id: int = 0, confidence: float = 0.25, max_attempts: int = 5):
+def test_camera_detection(model_path: str = 'yolov8n.pt', camera_id: int = 0, confidence: float = 0.25, max_attempts: int = 5, width: int = None, height: int = None):
     """
     カメラからの映像でYOLOv8物体検出をテストします。
     
@@ -29,6 +29,9 @@ def test_camera_detection(model_path: str = 'yolov8n.pt', camera_id: int = 0, co
         model_path: YOLOv8モデルファイルのパス
         camera_id: 使用するカメラのID（通常は0）
         confidence: 検出の信頼度閾値
+        max_attempts: カメラ初期化の最大試行回数
+        width: カメラ解像度の幅（None時は自動選択）
+        height: カメラ解像度の高さ（None時は自動選択）
     """
     # モデルを読み込み
     print(f"モデルを読み込み中: {model_path}")
@@ -54,9 +57,31 @@ def test_camera_detection(model_path: str = 'yolov8n.pt', camera_id: int = 0, co
     # それでも開けない場合は、GStreamerパイプラインを試す
     if not cap.isOpened():
         print("V4L2でも開けませんでした。libcameraを試しています...")
-        # libcamera-vid互換のパイプライン
-        pipeline = "libcamerasrc ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
-        cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+        
+        # Camera Module 3 Wide対応の解像度リスト
+        resolutions = [
+            (width, height) if width and height else None,  # ユーザー指定の解像度
+            (1536, 864),   # Wide対応: 120fps
+            (2304, 1296),  # Wide対応: 56fps
+            (1920, 1080),  # フルHD
+            (1280, 720),   # HD
+            (640, 480),    # VGA（標準モジュール用）
+        ]
+        
+        # 有効な解像度を順番に試す
+        for res in resolutions:
+            if res is None:
+                continue
+            w, h = res
+            print(f"解像度 {w}x{h} を試しています...")
+            pipeline = f"libcamerasrc ! video/x-raw,width={w},height={h},framerate=30/1 ! videoconvert ! appsink"
+            cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+            
+            if cap.isOpened():
+                print(f"成功: {w}x{h} で開きました")
+                break
+            else:
+                print(f"  {w}x{h} では開けませんでした")
     
     if not cap.isOpened():
         print(f"エラー: カメラ {camera_id} を開けませんでした")
@@ -210,6 +235,20 @@ def main():
         help='検出の信頼度閾値 (デフォルト: 0.25)'
     )
     
+    parser.add_argument(
+        '--width',
+        type=int,
+        default=None,
+        help='カメラ解像度の幅 (例: 1536, 2304)'
+    )
+    
+    parser.add_argument(
+        '--height',
+        type=int,
+        default=None,
+        help='カメラ解像度の高さ (例: 864, 1296)'
+    )
+    
     args = parser.parse_args()
     
     # モデルファイルの存在確認
@@ -217,11 +256,20 @@ def main():
         print(f"警告: モデルファイル '{args.model}' が見つかりません。")
         print("Ultralyticsが自動的にダウンロードを試みます。")
     
+    # Camera Module 3 Wide用の推奨解像度を表示
+    if args.width is None and args.height is None:
+        print("\nCamera Module 3 Wide推奨解像度:")
+        print("  --width 1536 --height 864  (高FPS)")
+        print("  --width 2304 --height 1296 (中解像度)")
+        print("  --width 4608 --height 2592 (最高解像度, 低FPS)\n")
+    
     # テストを実行
     success = test_camera_detection(
         model_path=args.model,
         camera_id=args.camera,
-        confidence=args.conf
+        confidence=args.conf,
+        width=args.width,
+        height=args.height
     )
     
     sys.exit(0 if success else 1)
