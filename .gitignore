@@ -209,3 +209,9 @@ Thumbs.db
 
 # Development memo (personal notes)
 dev-memo.md
+
+# Test output directories
+tests/images/
+tests/insect_detection_logs/
+insect_detection_logs/
+test_insect_logs/

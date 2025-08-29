@@ -31,9 +31,28 @@
   },
   "hardware": {
     "camera": {
-      "resolution_width": 1920,
-      "resolution_height": 1080,
-      "fps": 30
+      "resolution_width": 320,
+      "resolution_height": 240,
+      "fps": 30,
+      "camera_module": "Camera Module 3 Wide NoIR",
+      "focus_settings": {
+        "mode": "manual",
+        "default_distance_cm": 20,
+        "lens_position_range": {
+          "min": 0.0,
+          "max": 32.0,
+          "comment": "Camera Module 3 Wide has special 0-32 range"
+        },
+        "distance_to_lens_mapping": {
+          "5": 32.0,
+          "10": 20.0,
+          "20": 10.0,
+          "50": 4.0,
+          "100": 0.0
+        },
+        "sharpness_optimization": true,
+        "stabilization_delay_seconds": 1.0
+      }
     },
     "ir_led": {
       "brightness": 0.8,

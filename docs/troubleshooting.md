@@ -397,4 +397,72 @@ ModuleNotFoundError: No module named 'ultralytics'
 
 ---
 
-*最終更新日: 2025-08-26*
+## Camera Module 3 Wide オートフォーカス問題
+
+### 問題6: 透明な壁越しの撮影でフォーカスが合わない
+
+**症状:**
+- Camera Module 3 Wideのオートフォーカスが手前の透明な壁（虫かご等）にフォーカスしてしまう
+- 対象物（昆虫）がぼやけて検出精度が低下
+- 手動でフォーカス距離を設定しても期待通りにフォーカスが合わない
+
+**原因:**
+- **透明な障害物への誤フォーカス**: オートフォーカスシステムが透明な虫かごの壁を検出してそこにフォーカスを合わせてしまう
+- **Camera Module 3 Wideの特殊なLensPosition範囲**: 通常のカメラと異なり0-32の範囲を持つ（一般的なカメラは0-10）
+- **距離とレンズ位置の変換問題**: 物理的な距離（cm）をレンズ位置に変換する際の計算が不適切
+
+**解決方法:**
+
+1. **専用スクリプトの作成**
+   - `test_camera_detection_picamera2_fixed.py`を作成
+   - Camera Module 3 Wide用の特殊なLensPosition範囲（0-32）に対応
+   - 距離からレンズ位置への変換関数を実装
+
+2. **重要な技術的修正:**
+   ```python
+   def distance_to_lens_position(distance_cm, max_lens=32.0):
+       """
+       Camera Module 3 Wide用の変換関数
+       - 32.0が最近接（約5cm）
+       - 0.0が無限遠
+       - 対数スケールで中間距離を計算
+       """
+   ```
+
+3. **推奨フォーカス設定:**
+   - **5cm**: LensPosition = 32.0（最大近接）
+   - **10cm**: LensPosition ≈ 20.0
+   - **20cm**: LensPosition ≈ 10.0（昆虫観察に推奨）
+   - **50cm**: LensPosition ≈ 4.0
+   - **100cm以上**: LensPosition = 0.0（無限遠）
+
+4. **実行コマンド:**
+   ```bash
+   # 20cmの距離にフォーカス（昆虫観察用）
+   python test_camera_detection_picamera2_fixed.py --distance 20
+   
+   # 異なる距離でテスト
+   python test_camera_detection_picamera2_fixed.py --distance 10
+   python test_camera_detection_picamera2_fixed.py --distance 30
+   ```
+
+5. **シャープネスベースの最適化:**
+   - スクリプトは指定距離の前後でシャープネスを測定
+   - 最もシャープな位置に自動調整
+   - 透明な壁の影響を最小化
+
+**成功のポイント:**
+- ✅ マニュアルフォーカスモード（AfMode.Manual）の使用
+- ✅ Camera Module 3 Wide特有のLensPosition範囲への対応
+- ✅ 距離に応じた適切なレンズ位置の計算
+- ✅ シャープネスベースの微調整機能
+- ✅ リアルタイムでのフォーカス位置表示
+
+**注意事項:**
+- 透明な壁越しの撮影では、壁と対象物の距離を考慮して設定
+- 実際の最適値は環境により異なるため、複数の距離設定を試すことを推奨
+- フォーカス設定後は1秒程度の安定化時間が必要
+
+---
+
+*最終更新日: 2025-08-29*
