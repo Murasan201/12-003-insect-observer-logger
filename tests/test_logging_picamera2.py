@@ -172,12 +172,17 @@ def test_logging_with_detection(
     interval: int = 10,
     duration: int = 60,
     save_images: bool = False,
-    output_dir: str = './insect_detection_logs'
+    output_dir: str = None
 ):
     """ロギング機能テスト"""
     global picam2, running
     
-    output_path = Path(output_dir)
+    # デフォルトの出力ディレクトリをtests/insect_detection_logs/に設定
+    if output_dir is None:
+        script_dir = Path(__file__).parent
+        output_path = script_dir / "insect_detection_logs"
+    else:
+        output_path = Path(output_dir)
     
     # ログ設定
     csv_path, metadata_path = setup_logging(output_path)
@@ -209,18 +214,30 @@ def test_logging_with_detection(
         time.sleep(2)
         
         # フォーカス設定
-        print(f"Setting focus for {focus_distance}cm...")
         lens_controls = picam2.camera_controls.get("LensPosition")
         if lens_controls:
             lp_min, lp_max, lp_default = lens_controls
         else:
             lp_min, lp_max, lp_default = 0.0, 32.0, 1.0
         
-        target_lens_pos = distance_to_lens_position(focus_distance, lp_max)
-        picam2.set_controls({"AfMode": controls.AfModeEnum.Manual})
-        time.sleep(0.5)
-        picam2.set_controls({"LensPosition": float(target_lens_pos)})
-        time.sleep(1.0)
+        if focus_distance == 0:
+            print(f"Setting auto focus mode...")
+            # オートフォーカスモードを使用
+            picam2.set_controls({"AfMode": controls.AfModeEnum.Auto})
+            print("Auto focus mode enabled")
+            time.sleep(2.0)  # オートフォーカスの安定化待機
+        else:
+            print(f"Setting manual focus for {focus_distance}cm...")
+            
+            # 距離をレンズ位置に変換
+            target_lens_pos = distance_to_lens_position(focus_distance, lp_max)
+            print(f"Target lens position: {target_lens_pos:.1f} (for {focus_distance}cm)")
+            
+            # マニュアルモードで設定
+            picam2.set_controls({"AfMode": controls.AfModeEnum.Manual})
+            time.sleep(0.5)
+            picam2.set_controls({"LensPosition": float(target_lens_pos)})
+            time.sleep(1.0)
         
     except Exception as e:
         print(f"Error initializing camera: {e}")
@@ -231,7 +248,8 @@ def test_logging_with_detection(
         metadata = json.load(f)
     
     metadata.update({
-        'focus_distance_cm': focus_distance,
+        'focus_mode': 'auto' if focus_distance == 0 else 'manual',
+        'focus_distance_cm': focus_distance if focus_distance > 0 else None,
         'model_path': model_path,
         'confidence_threshold': confidence,
         'resolution': f"{width}x{height}",
@@ -267,14 +285,18 @@ def test_logging_with_detection(
     
     try:
         while running:
-            # 観測番号増加
-            observation_count += 1
             obs_start = time.time()
             
             # フレーム取得
             frame = picam2.capture_array()
             if frame is None:
+                print(f"[WARNING] Frame capture failed, skipping this cycle...")
+                # 短時間待機してリトライ
+                time.sleep(1)
                 continue
+            
+            # 成功した場合のみ観測番号を増加
+            observation_count += 1
             
             # YOLOv8検出
             results = model.predict(
@@ -328,14 +350,17 @@ def test_logging_with_detection(
                 cv2.imwrite(str(image_path), annotated_frame_bgr)
                 image_saved = True
             
-            # CSVに保存
-            save_detection_to_csv(
-                observation_count,
-                detections,
-                processing_time,
-                image_saved,
-                image_filename
-            )
+            # CSVに保存（検出の有無に関わらず必ず実行）
+            try:
+                save_detection_to_csv(
+                    observation_count,
+                    detections,
+                    processing_time,
+                    image_saved,
+                    image_filename
+                )
+            except Exception as csv_error:
+                print(f"[ERROR] Failed to save CSV for observation #{observation_count}: {csv_error}")
             
             # コンソール出力
             if detections:
@@ -357,6 +382,7 @@ def test_logging_with_detection(
             
             # 次の観測まで待機
             if running and interval > 0:
+                print(f"[INFO] Waiting {interval} seconds for next observation...")
                 time.sleep(interval)
     
     except Exception as e:
@@ -400,25 +426,32 @@ def main():
     parser.add_argument('--width', type=int, default=1536, help='Width')
     parser.add_argument('--height', type=int, default=864, help='Height')
     parser.add_argument('--distance', type=float, default=20.0,
-                       help='Focus distance in cm')
+                       help='Focus distance in cm (use 0 for auto focus)')
+    parser.add_argument('--auto-focus', action='store_true',
+                       help='Enable auto focus mode (overrides --distance)')
     parser.add_argument('--interval', type=int, default=10,
                        help='Observation interval in seconds')
     parser.add_argument('--duration', type=int, default=60,
                        help='Test duration in seconds (0 for unlimited)')
     parser.add_argument('--save-images', action='store_true',
                        help='Save detection images')
-    parser.add_argument('--output-dir', default='./insect_detection_logs',
-                       help='Output directory for logs')
+    parser.add_argument('--output-dir', default=None,
+                       help='Output directory for logs (default: tests/insect_detection_logs/)')
     
     args = parser.parse_args()
     
     print("\nInsect Detection Logging Test")
     print("="*50)
     print(f"Model: {args.model}")
-    print(f"Focus distance: {args.distance}cm")
+    # オートフォーカスフラグの確認
+    focus_distance = 0 if args.auto_focus else args.distance
+    focus_mode = "Auto" if focus_distance == 0 else f"{focus_distance}cm"
+    
+    print(f"Focus mode: {focus_mode}")
     print(f"Interval: {args.interval}s")
     print(f"Duration: {args.duration}s")
-    print(f"Output: {args.output_dir}")
+    output_display = args.output_dir if args.output_dir else "tests/insect_detection_logs/"
+    print(f"Output: {output_display}")
     print()
     
     # テスト実行
@@ -427,7 +460,7 @@ def main():
         confidence=args.conf,
         width=args.width,
         height=args.height,
-        focus_distance=args.distance,
+        focus_distance=focus_distance,
         interval=args.interval,
         duration=args.duration,
         save_images=args.save_images,

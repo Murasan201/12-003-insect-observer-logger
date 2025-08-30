@@ -99,17 +99,25 @@ def test_camera_detection_fixed(
         time.sleep(2)
         
         # フォーカス設定
-        print(f"\nSetting focus for {focus_distance}cm distance...")
-        
-        # 距離をレンズ位置に変換
-        target_lens_pos = distance_to_lens_position(focus_distance, lp_max)
-        print(f"Target lens position: {target_lens_pos:.1f} (for {focus_distance}cm)")
-        
-        # マニュアルモードで設定
-        picam2.set_controls({"AfMode": controls.AfModeEnum.Manual})
-        time.sleep(0.5)
-        picam2.set_controls({"LensPosition": float(target_lens_pos)})
-        time.sleep(1.0)
+        if focus_distance == 0:
+            print(f"\nSetting auto focus mode...")
+            # オートフォーカスモードを使用
+            picam2.set_controls({"AfMode": controls.AfModeEnum.Auto})
+            print("Auto focus mode enabled")
+            time.sleep(2.0)  # オートフォーカスの安定化待機
+            target_lens_pos = None
+        else:
+            print(f"\nSetting manual focus for {focus_distance}cm distance...")
+            
+            # 距離をレンズ位置に変換
+            target_lens_pos = distance_to_lens_position(focus_distance, lp_max)
+            print(f"Target lens position: {target_lens_pos:.1f} (for {focus_distance}cm)")
+            
+            # マニュアルモードで設定
+            picam2.set_controls({"AfMode": controls.AfModeEnum.Manual})
+            time.sleep(0.5)
+            picam2.set_controls({"LensPosition": float(target_lens_pos)})
+            time.sleep(1.0)
         
         # 実際の位置を確認
         metadata = picam2.capture_metadata()
@@ -117,13 +125,16 @@ def test_camera_detection_fixed(
         if actual_pos != -1:
             print(f"Actual lens position: {actual_pos:.1f}")
         
-        # シャープネス最適化（オプション）
-        print("\nOptimizing focus around target position...")
-        best_pos = optimize_focus_simple(picam2, target_lens_pos, lp_max)
-        if abs(best_pos - target_lens_pos) > 1.0:
-            picam2.set_controls({"LensPosition": float(best_pos)})
-            print(f"Optimized lens position: {best_pos:.1f}")
-            time.sleep(1.0)
+        # シャープネス最適化（マニュアルフォーカスの場合のみ）
+        if focus_distance > 0 and target_lens_pos is not None:
+            print("\nOptimizing focus around target position...")
+            best_pos = optimize_focus_simple(picam2, target_lens_pos, lp_max)
+            if abs(best_pos - target_lens_pos) > 1.0:
+                picam2.set_controls({"LensPosition": float(best_pos)})
+                print(f"Optimized lens position: {best_pos:.1f}")
+                time.sleep(1.0)
+        elif focus_distance == 0:
+            print("Auto focus mode - skipping manual optimization")
         
     except Exception as e:
         print(f"Error: Failed to initialize camera: {e}")
@@ -268,7 +279,9 @@ def main():
     parser.add_argument('--height', type=int, default=864, help='Height')
     parser.add_argument('--no-display', action='store_true', help='Headless mode')
     parser.add_argument('--distance', type=float, default=20.0, 
-                       help='Focus distance in cm (5-100)')
+                       help='Focus distance in cm (5-100), use 0 for auto focus')
+    parser.add_argument('--auto-focus', action='store_true',
+                       help='Enable auto focus mode (overrides --distance)')
     
     args = parser.parse_args()
     
@@ -283,6 +296,9 @@ def main():
     print("  100cm -> 0.0 (infinity)")
     print()
     
+    # オートフォーカスフラグの確認
+    focus_distance = 0 if args.auto_focus else args.distance
+    
     # テスト実行
     success = test_camera_detection_fixed(
         model_path=args.model,
@@ -290,7 +306,7 @@ def main():
         width=args.width,
         height=args.height,
         show_display=not args.no_display,
-        focus_distance=args.distance
+        focus_distance=focus_distance
     )
     
     sys.exit(0 if success else 1)
