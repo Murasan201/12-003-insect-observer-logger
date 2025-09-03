@@ -53,8 +53,8 @@ def distance_to_lens_position(distance_cm, max_lens=32.0):
 def test_camera_detection_fixed(
     model_path: str = 'yolov8n.pt',
     confidence: float = 0.25,
-    width: int = 1536,
-    height: int = 864,
+    width: int = 2304,
+    height: int = 1296,
     show_display: bool = True,
     focus_distance: float = 20.0
 ):
@@ -87,6 +87,13 @@ def test_camera_detection_fixed(
             print("Warning: Using assumed LensPosition range: 0-32")
         
         # カメラ設定
+        # Camera Module 3 Wide用: 2304x1296の2x2ビニングモードで最大視野角を確保
+        sensor_resolution = picam2.sensor_resolution
+        print(f"Sensor resolution: {sensor_resolution}")
+        print(f"Using binned sensor mode: {width}x{height} for full wide-angle coverage")
+        
+        # 2x2ビニングモードを使用して最大視野角を確保
+        # 2304x1296は2x2ビニング（4608x2592の半分）で最大FOVを維持
         config = picam2.create_preview_configuration(
             main={"size": (width, height), "format": "RGB888"},
             buffer_count=4
@@ -275,8 +282,8 @@ def main():
     
     parser.add_argument('--model', default='yolov8n.pt', help='Model path')
     parser.add_argument('--conf', type=float, default=0.25, help='Confidence threshold')
-    parser.add_argument('--width', type=int, default=1536, help='Width')
-    parser.add_argument('--height', type=int, default=864, help='Height')
+    parser.add_argument('--width', type=int, default=2304, help='Width (default: 2304 for full wide-angle)')
+    parser.add_argument('--height', type=int, default=1296, help='Height (default: 1296 for full wide-angle)')
     parser.add_argument('--no-display', action='store_true', help='Headless mode')
     parser.add_argument('--distance', type=float, default=20.0, 
                        help='Focus distance in cm (5-100), use 0 for auto focus')
