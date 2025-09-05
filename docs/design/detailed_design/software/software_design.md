@@ -2131,7 +2131,340 @@ SimpleObserver (独立性確保)
 
 ---
 
-*文書バージョン: 1.1*  
-*最終更新日: 2025-08-13*  
-*更新内容: simple_observer.py モジュール仕様追加*  
+## 10. Camera Test Scripts (tests/)
+
+### 10.1 テストスクリプト概要
+
+#### 10.1.1 目的と役割
+tests/ディレクトリに配置された専用テストスクリプト群：
+- Camera Module 3 Wide NoIR専用の検出・ロギング機能
+- 本番システムとは独立したテスト環境
+- オートフォーカス・マニュアルフォーカス対応
+- 詳細な位置情報ログとCSV出力
+
+#### 10.1.2 対象スクリプト
+```
+tests/
+├── test_camera_detection_picamera2_fixed.py  # リアルタイム検出テスト
+├── test_logging_picamera2.py                 # データロギングテスト
+└── images/                                   # 検出画像保存先
+    insect_detection_logs/                    # ログファイル保存先
+```
+
+### 10.2 test_camera_detection_picamera2_fixed.py
+
+#### 10.2.1 機能仕様
+```python
+def test_camera_detection_fixed(
+    model_path: str = 'yolov8n.pt',
+    confidence: float = 0.25,
+    width: int = 1536,
+    height: int = 864,
+    show_display: bool = True,
+    focus_distance: float = 20.0  # 0でオートフォーカス
+):
+```
+
+**主要機能:**
+- Camera Module 3 Wide専用フォーカス制御（LensPosition 0-32範囲対応）
+- オートフォーカス・マニュアルフォーカス切り替え
+- YOLOv8による昆虫検出（カスタムモデル対応）
+- リアルタイム画面表示（FPS・信頼度・位置情報）
+- シャープネス最適化機能
+
+#### 10.2.2 フォーカス制御設計
+```python
+def distance_to_lens_position(distance_cm, max_lens=32.0):
+    """Camera Module 3 Wide用レンズ位置変換
+    
+    距離マッピング:
+    - 5cm  -> 32.0 (最近接)
+    - 20cm -> 10.0 (昆虫観察推奨)
+    - 50cm -> 4.0
+    - 100cm-> 0.0 (無限遠)
+    """
+```
+
+**オートフォーカス実装:**
+```python
+if focus_distance == 0:
+    picam2.set_controls({"AfMode": controls.AfModeEnum.Auto})
+    time.sleep(2.0)  # 安定化待機
+else:
+    picam2.set_controls({"AfMode": controls.AfModeEnum.Manual})
+    picam2.set_controls({"LensPosition": float(target_lens_pos)})
+```
+
+#### 10.2.3 使用方法
+```bash
+# オートフォーカス（推奨）
+python test_camera_detection_picamera2_fixed.py --model ../weights/best.pt --auto-focus
+
+# マニュアルフォーカス
+python test_camera_detection_picamera2_fixed.py --model ../weights/best.pt --distance 20
+
+# ヘッドレスモード
+python test_camera_detection_picamera2_fixed.py --model ../weights/best.pt --auto-focus --no-display
+```
+
+### 10.3 test_logging_picamera2.py
+
+#### 10.3.1 機能仕様
+```python
+def test_logging_with_detection(
+    model_path: str = 'weights/best.pt',
+    confidence: float = 0.25,
+    width: int = 1536,
+    height: int = 864,
+    focus_distance: float = 20.0,  # 0でオートフォーカス
+    interval: int = 10,
+    duration: int = 60,
+    save_images: bool = False,
+    output_dir: str = None
+):
+```
+
+**主要機能:**
+- 定期的な昆虫検出とデータロギング
+- CSV形式での詳細位置情報記録
+- オプションでの検出画像自動保存
+- メタデータのJSON出力
+- エラーハンドリング付き連続観測
+
+#### 10.3.2 CSV出力データ構造
+```csv
+timestamp,observation_number,detection_count,has_detection,
+class_names,confidence_values,bbox_coordinates,
+center_x,center_y,bbox_width,bbox_height,area,
+processing_time_ms,image_saved,image_filename
+```
+
+**データ項目詳細:**
+```python
+csv_data = {
+    'timestamp': '2025-08-30T15:06:09.551232',
+    'observation_number': 1,
+    'detection_count': 1,
+    'has_detection': True,
+    'class_names': 'beetle',
+    'confidence_values': '0.667',
+    'bbox_coordinates': '(851,0,1387,391)',
+    'center_x': '1119.1',    # バウンディングボックス中心X座標
+    'center_y': '195.3',     # バウンディングボックス中心Y座標
+    'bbox_width': '536.3',   # バウンディングボックス幅
+    'bbox_height': '390.7',  # バウンディングボックス高さ
+    'area': '209499.1',      # バウンディングボックス面積
+    'processing_time_ms': '1669.2',
+    'image_saved': False,
+    'image_filename': ''
+}
+```
+
+#### 10.3.3 メタデータ管理
+```json
+{
+  "start_time": "2025-08-30T15:06:00.000000",
+  "camera_module": "Camera Module 3 Wide NoIR",
+  "focus_mode": "auto",
+  "focus_distance_cm": null,
+  "model_path": "weights/best.pt",
+  "confidence_threshold": 0.25,
+  "resolution": "1536x864",
+  "interval_seconds": 10,
+  "duration_seconds": 60,
+  "save_images": false,
+  "csv_file": "insect_detection_log_20250830_150600.csv"
+}
+```
+
+#### 10.3.4 使用方法
+```bash
+# オートフォーカス・短時間テスト
+python test_logging_picamera2.py --model ../weights/best.pt --auto-focus --interval 10 --duration 60
+
+# 画像保存付き長時間観察
+python test_logging_picamera2.py --model ../weights/best.pt --auto-focus --interval 30 --duration 3600 --save-images
+
+# マニュアルフォーカス
+python test_logging_picamera2.py --model ../weights/best.pt --distance 20 --interval 5 --duration 120
+```
+
+### 10.4 技術的特徴
+
+#### 10.4.1 Camera Module 3 Wide対応
+```python
+# 特殊なLensPosition範囲（0-32）への対応
+lens_controls = picam2.camera_controls.get("LensPosition")
+if lens_controls:
+    lp_min, lp_max, lp_default = lens_controls  # 0.0, 32.0, 1.0
+else:
+    lp_min, lp_max, lp_default = 0.0, 32.0, 1.0
+```
+
+#### 10.4.2 オートフォーカス実装の利点
+```
+オートフォーカスモード:
+├── 利点: 距離測定不要、動的対応、画質大幅改善
+├── 欠点: フォーカス不安定の可能性、処理遅延
+└── 推奨用途: 一般的な昆虫観察、初期テスト
+```
+
+#### 10.4.3 詳細位置情報の活用
+```python
+# 移動追跡分析
+movement_analysis = {
+    'horizontal_movement': abs(current_x - previous_x),
+    'vertical_movement': abs(current_y - previous_y),
+    'size_change': abs(current_area - previous_area),
+    'confidence_trend': confidence_values[-5:]  # 直近5回の信頼度
+}
+```
+
+### 10.5 品質・性能仕様
+
+#### 10.5.1 処理時間要件
+```
+- 初回検出: ~1500ms（モデル初期化含む）
+- 通常検出: 300-400ms（CPU環境）
+- フォーカス調整: 2000ms（オートフォーカス初期化）
+- CSV書き込み: <1ms（即座にflush実行）
+```
+
+#### 10.5.2 データ品質保証
+```python
+# CSV書き込み保証
+try:
+    csv_writer.writerow(row)
+    csv_file.flush()  # 確実な書き込み
+except Exception as csv_error:
+    print(f"[ERROR] Failed to save CSV: {csv_error}")
+```
+
+#### 10.5.3 エラー処理設計
+```python
+error_handling = {
+    'フレーム取得失敗': '警告ログ出力・短時間リトライ',
+    'CSV書き込み失敗': 'エラーメッセージ・観測継続',
+    'モデル推論エラー': 'エラーログ・空データ記録',
+    'カメラ初期化失敗': '即座に終了・エラーリターン'
+}
+```
+
+### 10.6 運用・保守
+
+#### 10.6.1 ファイル出力管理
+```
+tests/
+├── insect_detection_logs/           # CSV・JSONログ
+│   ├── insect_detection_log_YYYYMMDD_HHMMSS.csv
+│   └── metadata_YYYYMMDD_HHMMSS.json
+└── images/                          # 検出画像（オプション）
+    └── detection_YYYYMMDD_HHMMSS_mmm.jpg
+```
+
+#### 10.6.2 ログローテーション
+```python
+# タイムスタンプベースのファイル命名
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+csv_filename = f"insect_detection_log_{timestamp}.csv"
+metadata_filename = f"metadata_{timestamp}.json"
+```
+
+#### 10.6.3 データ分析例
+```python
+# CSVデータ分析サンプル
+import pandas as pd
+
+df = pd.read_csv('insect_detection_log_20250830_150600.csv')
+analysis = {
+    'detection_rate': df['has_detection'].mean(),
+    'avg_confidence': df[df['has_detection']]['confidence_values'].mean(),
+    'movement_pattern': df[['center_x', 'center_y']].diff().abs().mean(),
+    'size_distribution': df[df['has_detection']]['area'].describe()
+}
+```
+
+### 10.7 本番環境用スクリプト
+
+#### 10.7.1 本番環境用ファイル
+```
+tests/ディレクトリ内のファイルは本番環境用:
+├── test_logging_left_half.py         # 本番用長時間ロギングスクリプト
+├── test_camera_left_half_realtime.py # リアルタイム監視・調整用
+├── test_camera_detection_picamera2_fixed.py  # 全画面検出用
+└── test_logging_picamera2.py         # 全画面ロギング用
+
+※「test_」という名前だが、これらは本番環境で使用する最終版スクリプト
+```
+
+#### 10.7.2 本番環境での成功パラメータ（実証済み）
+```bash
+# 9時間長時間観察の実証済み成功コマンド
+nohup python3 test_logging_left_half.py \
+  --auto-focus \
+  --conf 0.4 \
+  --exposure -0.5 \
+  --contrast 2 \
+  --brightness -0.05 \
+  --interval 60 \
+  --duration 32400 \
+  --save-images > logging_9h.log 2>&1 &
+```
+
+**成功パラメータの詳細:**
+| パラメータ | 値 | 説明 |
+|-----------|-----|------|
+| `--conf` | 0.4 | 信頼度閾値（赤外線環境で最適） |
+| `--exposure` | -0.5 | 露出補正（白飛び防止） |
+| `--contrast` | 2 | コントラスト（赤外線画像の鮮明化） |
+| `--brightness` | -0.05 | わずかな明度調整 |
+| `--interval` | 60 | 1分間隔での観測 |
+| `--duration` | 32400 | 9時間（32400秒）継続 |
+
+#### 10.7.3 本番環境の特徴
+```
+実証済み環境条件:
+├── Camera Module 3 Wide NoIR使用
+├── 赤外線ライトのみ（可視光不要）
+├── 左半分検出エリア（餌場に集中）
+├── 2304x1296解像度（最大広角）
+└── 長時間安定動作（9時間連続確認済み）
+```
+
+#### 10.7.4 左半分検出スクリプトの特徴
+```python
+# test_logging_left_half.py の主な機能
+1. 画面左半分のみを検出対象とする
+2. 誤検出を大幅に削減（土や葉を無視）
+3. 餌エリアに焦点を当てた効率的な観察
+4. CSV出力に検出エリア情報を追加
+5. 本番環境での長時間安定稼働を実証
+```
+
+### 10.8 将来拡張計画
+
+#### 10.8.1 機能拡張ポイント
+```
+計画中の拡張:
+├── 複数昆虫同時追跡
+├── 活動パターン自動分析
+├── Web UI での実時間監視
+├── アラート・通知機能
+└── 機械学習による行動分類
+```
+
+#### 10.8.2 システム統合
+```
+統合可能性:
+├── main.pyとの連携: 可能（独立性保持）
+├── simple_observer.pyとの統合: 検討中
+├── CLI機能への組み込み: 将来対応
+└── Web APIとしての公開: 拡張可能
+```
+
+---
+
+*文書バージョン: 1.3*  
+*最終更新日: 2025-09-02*  
+*更新内容: 本番環境用スクリプト情報と成功パラメータ追加*  
 *承認者: 開発チーム*
