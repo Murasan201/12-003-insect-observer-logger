@@ -2392,7 +2392,8 @@ tests/ディレクトリ内のファイルは本番環境用:
 ├── test_logging_left_half.py         # 本番用長時間ロギングスクリプト
 ├── test_camera_left_half_realtime.py # リアルタイム監視・調整用
 ├── test_camera_detection_picamera2_fixed.py  # 全画面検出用
-└── test_logging_picamera2.py         # 全画面ロギング用
+├── test_logging_picamera2.py         # 全画面ロギング用
+└── visualize_detection_data.py       # データ可視化・グラフ生成
 
 ※「test_」という名前だが、これらは本番環境で使用する最終版スクリプト
 ```
@@ -2441,6 +2442,76 @@ nohup python3 test_logging_left_half.py \
 5. 本番環境での長時間安定稼働を実証
 ```
 
+#### 10.7.5 データ可視化スクリプト（visualize_detection_data.py）
+
+**機能概要:**
+```python
+def create_detection_plot(df, output_path=None, show_plot=True):
+    """検出数の時系列グラフを3つ作成
+    
+    1. 時系列プロット: 時間 vs 検出数の推移
+    2. 累積検出数: 総検出数の累積グラフ  
+    3. 時間帯別活動量: 21:00-06:00の活動パターン
+    """
+```
+
+**主要機能:**
+- 横軸：時間、縦軸：検出数の時系列グラフ
+- 累積検出数の推移グラフ
+- 時間帯別活動パターン（21:00-06:00の9時間）
+- 統計情報表示（総検出数、検出率、最活発時間等）
+- 高品質PNG出力（300 DPI）
+- オプションのヒートマップ（複数日データ対応）
+
+**使用方法:**
+```bash
+# 基本的な可視化
+python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_YYYYMMDD_HHMMSS.csv
+
+# 出力ファイル指定
+python3 visualize_detection_data.py [CSV_FILE] -o output_graph.png
+
+# SSH環境（表示なし・保存のみ）
+python3 visualize_detection_data.py [CSV_FILE] --no-display
+
+# 統計情報のみ表示
+python3 visualize_detection_data.py [CSV_FILE] --stats-only
+
+# ヒートマップも生成
+python3 visualize_detection_data.py [CSV_FILE] --heatmap
+```
+
+**グラフの特徴:**
+1. **時系列プロット**
+   - 塗りつぶしエリアチャート
+   - 1時間間隔の時間軸
+   - 21:00スタートの統一時間軸
+
+2. **累積検出数**
+   - 総活動量の推移を可視化
+   - 活動の集中期間が特定可能
+
+3. **時間帯別活動量**
+   - 21:00-06:00の9時間に特化
+   - 最も活発な時間帯を強調表示
+   - 平均値ラインで活動レベル比較
+
+**出力統計情報:**
+```python
+statistics = {
+    'total_observations': int,      # 総観測回数
+    'total_detections': int,        # 総検出数
+    'detection_rate': float,        # 検出率（%）
+    'most_active_hour': str,        # 最も活発な時間帯
+    'observation_duration': float   # 観測継続時間
+}
+```
+
+**依存ライブラリ:**
+```bash
+pip install matplotlib pandas numpy
+```
+
 ### 10.8 将来拡張計画
 
 #### 10.8.1 機能拡張ポイント
@@ -2464,7 +2535,7 @@ nohup python3 test_logging_left_half.py \
 
 ---
 
-*文書バージョン: 1.3*  
-*最終更新日: 2025-09-02*  
-*更新内容: 本番環境用スクリプト情報と成功パラメータ追加*  
+*文書バージョン: 1.4*  
+*最終更新日: 2025-09-04*  
+*更新内容: データ可視化スクリプト（visualize_detection_data.py）追加*  
 *承認者: 開発チーム*

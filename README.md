@@ -164,6 +164,57 @@ tests/images/
 - **観測間隔**: 60秒（1分）
 - **解像度**: 2304x1296（最大広角）
 
+## Data Visualization (データ可視化)
+
+収集したCSVデータから活動パターンを視覚的に分析できます。
+
+### 基本的な使用方法
+
+```bash
+cd tests/
+
+# 基本的なグラフ生成（3つのグラフを作成）
+python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_YYYYMMDD_HHMMSS.csv
+
+# 出力ファイル名を指定
+python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_20250904_210012.csv -o my_analysis.png
+
+# SSH環境での使用（表示なし・保存のみ）
+python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_20250904_210012.csv --no-display
+
+# 統計情報のみ表示
+python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_20250904_210012.csv --stats-only
+```
+
+### 生成されるグラフ
+
+1. **時系列プロット** - 時間 vs 検出数の推移
+2. **累積検出数** - 総活動量の累積グラフ
+3. **時間帯別活動量** - 21:00-06:00の活動パターン
+
+### 表示される統計情報
+
+- 総観測回数・総検出数
+- 検出率（検出ありの観測割合）
+- 最も活発な時間帯
+- 観測継続時間
+
+### 必要なライブラリ
+
+```bash
+pip install matplotlib pandas numpy
+```
+
+### 使用例
+
+```bash
+# 最新のログファイルを確認
+ls -lt tests/insect_detection_logs/*.csv | head -1
+
+# グラフ生成
+python3 tests/visualize_detection_data.py tests/insect_detection_logs/left_half_detection_log_20250904_210012.csv
+```
+
 ## Troubleshooting
 
 ### カメラが検出されない
