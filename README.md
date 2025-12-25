@@ -81,7 +81,7 @@ python3 test_camera_left_half_realtime.py \
 cd production/
 
 # 9時間の本番ロギング（実証済み最適パラメータ）
-nohup python3 test_logging_left_half.py \
+nohup python3 production_logging_left_half.py \
   --auto-focus \
   --conf 0.4 \
   --exposure -0.5 \
@@ -92,7 +92,7 @@ nohup python3 test_logging_left_half.py \
   --save-images > logging_9h.log 2>&1 &
 
 # 1時間のテストロギング
-python3 test_logging_left_half.py \
+python3 production_logging_left_half.py \
   --auto-focus \
   --conf 0.3 \
   --interval 30 \
@@ -100,7 +100,7 @@ python3 test_logging_left_half.py \
   --save-images
 
 # 10分間の短時間テスト
-python3 test_logging_left_half.py \
+python3 production_logging_left_half.py \
   --auto-focus \
   --interval 10 \
   --duration 600 \
@@ -111,7 +111,7 @@ python3 test_logging_left_half.py \
 
 ```bash
 # 実行状況確認
-ps aux | grep test_logging
+ps aux | grep production_logging
 
 # ログのリアルタイム監視
 tail -f logging_9h.log
