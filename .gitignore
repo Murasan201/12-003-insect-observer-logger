@@ -220,3 +220,4 @@ test_insect_logs/
 # Exception: Include specific production data files for documentation
 !production/insect_detection_logs/left_half_detection_log_20250904_210012.csv
 !production/insect_detection_logs/left_half_detection_log_20250904_210012_graph.png
+!production/insect_detection_logs/left_half_metadata_20250904_210012.json

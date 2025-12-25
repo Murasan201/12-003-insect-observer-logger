@@ -108,8 +108,15 @@ The following files were actually used in the production environment and contain
 - **Log Data (Read-Only)**:
   - `production/insect_detection_logs/left_half_detection_log_*.csv` - Actual observation data
   - `production/insect_detection_logs/insect_detection_log_*.csv` - Actual detection logs
-  - `production/insect_detection_logs/*_metadata_*.json` - Session metadata
+  - `production/insect_detection_logs/*_metadata_*.json` - Session metadata (contains production parameters)
   - `production/insect_detection_logs/*.png` - Generated visualization graphs
+
+#### Git-Tracked Production Data Files
+The following production data files are tracked in git as reference documentation:
+- `left_half_detection_log_20250904_210012.csv` - 9-hour observation data (538 records)
+- `left_half_detection_log_20250904_210012_graph.png` - Visualization graph
+- `left_half_metadata_20250904_210012.json` - **Production parameters used in actual observation**
+  - Contains: camera settings, detection threshold, interval, duration, etc.
 
 #### Book Publication Files (Editable)
 The following files are copies intended for book publication and documentation. These may be edited for clarity and presentation.

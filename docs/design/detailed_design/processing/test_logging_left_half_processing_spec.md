@@ -128,11 +128,50 @@ python3 test_logging_left_half.py [options]
 
 **ファイル名パターン**: `left_half_metadata_{YYYYMMDD_HHMMSS}.json`
 
-**内容**:
-- セッション開始時刻
-- 検出エリア設定
-- システム情報
-- カメラパラメータ
+**Git管理対象ファイル**: `left_half_metadata_20250904_210012.json`（本番パラメータ記録）
+
+**フォーマット定義**:
+
+```json
+{
+  "start_time": "2025-09-04T21:00:12.074679",
+  "detection_area": "left_half",
+  "area_description": "Only left 50% of camera view is monitored",
+  "log_file": "path/to/log_file.csv",
+  "system_info": {
+    "camera": "Camera Module 3 Wide NoIR",
+    "platform": "Raspberry Pi"
+  },
+  "focus_mode": "auto",
+  "focus_distance_cm": null,
+  "model_path": "../weights/best.pt",
+  "confidence_threshold": 0.4,
+  "resolution": "2304x1296",
+  "detection_width": 1152,
+  "interval_seconds": 60,
+  "duration_seconds": 32400,
+  "save_images": true
+}
+```
+
+**フィールド定義**:
+
+| フィールド | 型 | 説明 |
+|-----------|---|------|
+| start_time | str | セッション開始時刻（ISO 8601） |
+| detection_area | str | 検出エリア（left_half） |
+| area_description | str | エリアの説明 |
+| log_file | str | 出力CSVファイルパス |
+| system_info | object | システム情報（camera, platform） |
+| focus_mode | str | フォーカスモード（auto/manual） |
+| focus_distance_cm | float/null | マニュアルフォーカス距離 |
+| model_path | str | YOLOモデルパス |
+| confidence_threshold | float | 検出信頼度閾値 |
+| resolution | str | カメラ解像度 |
+| detection_width | int | 検出エリア幅（ピクセル） |
+| interval_seconds | int | 観測間隔（秒） |
+| duration_seconds | int | 総観測時間（秒） |
+| save_images | bool | 画像保存フラグ |
 
 ---
 

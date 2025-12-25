@@ -1,0 +1,19 @@
+{
+  "start_time": "2025-09-04T21:00:12.074679",
+  "detection_area": "left_half",
+  "area_description": "Only left 50% of camera view is monitored",
+  "log_file": "/home/pi/work/project/12-002-insect-observer-logger/tests/insect_detection_logs/left_half_detection_log_20250904_210012.csv",
+  "system_info": {
+    "camera": "Camera Module 3 Wide NoIR",
+    "platform": "Raspberry Pi"
+  },
+  "focus_mode": "auto",
+  "focus_distance_cm": null,
+  "model_path": "../weights/best.pt",
+  "confidence_threshold": 0.4,
+  "resolution": "2304x1296",
+  "detection_width": 1152,
+  "interval_seconds": 60,
+  "duration_seconds": 32400,
+  "save_images": true
+}
