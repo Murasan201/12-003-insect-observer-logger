@@ -77,6 +77,8 @@
 ├── utils/                 # ★ Utility modules
 │   ├── data_validator.py
 │   └── file_naming.py
+├── tests/                 # ★ Test files and production logging data
+│   └── insect_detection_logs/  # Real-world long-duration logging data
 ├── input_images/          # Input directory (not tracked)
 ├── output_images/         # Output directory (not tracked)
 ├── logs/                  # Log files (not tracked)
@@ -90,6 +92,16 @@
 - **Purpose**: Single-function test script for real-time object detection using camera input
 - **Usage**: For testing and validating YOLOv8 model performance with live camera feed
 - **Detailed Usage**: See `software_design.md` for comprehensive usage instructions and parameters
+
+### Production Test Data
+- **Location**: `tests/insect_detection_logs/`
+- **Contents**: Real-world long-duration logging data from production environment
+- **Data Files**:
+  - `left_half_detection_log_*.csv` - Long-duration detection logs (8-9 hours each)
+  - `insect_detection_log_*.csv` - Detection test logs
+  - `*_metadata_*.json` - Session metadata files
+  - `*.png` - Visualization graphs
+- **Note**: All production environment test files and logging data are consolidated in the `tests/` directory
 
 ## Coding Standards
 

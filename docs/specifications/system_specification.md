@@ -574,6 +574,25 @@ python train_yolo.py \
 - User interface testing
 - Documentation completeness
 
+### 15.4 Production Environment Test Data
+All production environment test files and long-duration logging data are stored in the `tests/` directory.
+
+#### 15.4.1 Data Location
+- **Directory**: `tests/insect_detection_logs/`
+
+#### 15.4.2 Available Data Files
+| File Pattern | Description | Duration |
+|--------------|-------------|----------|
+| `left_half_detection_log_*.csv` | Long-duration detection logs | 8-9 hours each |
+| `insect_detection_log_*.csv` | Detection test logs | Various |
+| `*_metadata_*.json` | Session metadata | - |
+| `*.png` | Visualization graphs | - |
+
+#### 15.4.3 Data Format (CSV)
+```csv
+timestamp,detected,beetle_count,confidence_max,confidence_avg,processing_time_ms,x_min,y_min,x_max,y_max
+```
+
 ---
 
 ## 16. Appendices
