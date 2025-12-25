@@ -54,7 +54,7 @@ pip install -r requirements.txt
 カメラの映像をリアルタイムで確認しながら、検出パラメータを調整できます。
 
 ```bash
-cd tests/
+cd production/
 
 # デフォルト設定で実行（最適化済みパラメータ）
 python3 test_camera_left_half_realtime.py --auto-focus
@@ -78,7 +78,7 @@ python3 test_camera_left_half_realtime.py \
 バックグラウンドで長時間の観察データを自動収集します。
 
 ```bash
-cd tests/
+cd production/
 
 # 9時間の本番ロギング（実証済み最適パラメータ）
 nohup python3 test_logging_left_half.py \
@@ -117,7 +117,7 @@ ps aux | grep test_logging
 tail -f logging_9h.log
 
 # CSVデータ確認
-tail -10 tests/insect_detection_logs/*.csv
+tail -10 production/insect_detection_logs/*.csv
 
 # プロセス停止
 pkill -f test_logging_left_half.py
@@ -127,14 +127,14 @@ pkill -f test_logging_left_half.py
 
 ### ログファイル
 ```
-tests/insect_detection_logs/
+production/insect_detection_logs/
 ├── left_half_detection_log_YYYYMMDD_HHMMSS.csv  # 検出データ
 └── left_half_metadata_YYYYMMDD_HHMMSS.json      # メタデータ
 ```
 
 ### 検出画像
 ```
-tests/images/
+production/images/
 └── left_half_detection_YYYYMMDD_HHMMSS_mmm.jpg  # 検出時の画像
 ```
 
@@ -171,7 +171,7 @@ tests/images/
 ### 基本的な使用方法
 
 ```bash
-cd tests/
+cd production/
 
 # 基本的なグラフ生成（3つのグラフを作成）
 python3 visualize_detection_data.py insect_detection_logs/left_half_detection_log_YYYYMMDD_HHMMSS.csv
@@ -209,10 +209,10 @@ pip install matplotlib pandas numpy
 
 ```bash
 # 最新のログファイルを確認
-ls -lt tests/insect_detection_logs/*.csv | head -1
+ls -lt production/insect_detection_logs/*.csv | head -1
 
 # グラフ生成
-python3 tests/visualize_detection_data.py tests/insect_detection_logs/left_half_detection_log_20250904_210012.csv
+python3 production/visualize_detection_data.py production/insect_detection_logs/left_half_detection_log_20250904_210012.csv
 ```
 
 ## Troubleshooting
