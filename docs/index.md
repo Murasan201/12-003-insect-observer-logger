@@ -24,6 +24,7 @@
 実装レベルの具体的な設計を定義する下位設計
 - [💻 ソフトウェア設計](design/detailed_design/software/software_design.md) - モジュール・クラス設計
 - [📋 クラス図設計](design/detailed_design/software/class_diagram_design.md) - PlantUMLクラス図
+- [📊 可視化スクリプト仕様](design/detailed_design/processing/visualize_detection_data_processing_spec.md) - 検出データ可視化ツール
 
 ### 📚 設計文書ガイド
 - [設計文書概要](design/README.md) - 設計文書の分類・プロセス
@@ -31,9 +32,6 @@
 - [詳細設計書ガイド](design/detailed_design/README.md) - 詳細設計の読み方
 
 ## 🚀 デプロイ・運用
-
-### 📦 デプロイメント
-- [Hailo 8L NPUデプロイガイド](deployment/HAILO_DEPLOYMENT_GUIDE.md) - NPU環境構築
 
 ### 📖 運用ガイド
 - [CLI使用ガイド](operations/CLI_USAGE.md) - コマンドラインインターフェース操作方法
