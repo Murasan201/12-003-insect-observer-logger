@@ -342,3 +342,11 @@ model_path = hf_hub_download(
 - Revoke and regenerate any accidentally committed secrets immediately
 - Implement pre-commit hooks for sensitive data detection
 - Store production secrets in secure secret management systems
+
+## Subagent Guidelines
+
+### Model Selection
+- **ALWAYS use `sonnet` model for subagents** when using the Task tool
+- Sonnet provides optimal balance of speed and capability for code tasks
+- Only use `opus` for complex architectural decisions requiring deep reasoning
+- Use `haiku` for simple, quick tasks like file searches

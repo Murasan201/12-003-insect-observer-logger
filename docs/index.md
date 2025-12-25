@@ -35,6 +35,14 @@
 ### 📦 デプロイメント
 - [Hailo 8L NPUデプロイガイド](deployment/HAILO_DEPLOYMENT_GUIDE.md) - NPU環境構築
 
+### 📖 運用ガイド
+- [CLI使用ガイド](operations/CLI_USAGE.md) - コマンドラインインターフェース操作方法
+- [Simple Observer使用ガイド](operations/simple_observer_usage.md) - シンプル観測アプリケーション使用方法
+- [昆虫観測クイックガイド](operations/insect_observation_quick_guide.md) - 観測手順のクイックリファレンス
+
+### 🔧 トラブルシューティング
+- [トラブルシューティングガイド](troubleshooting.md) - カメラ・システム問題の解決方法
+
 ## 📚 参考資料
 
 ### 🤖 機械学習モデル
@@ -44,7 +52,9 @@
 - [CLAUDE.md](../CLAUDE.md) - Claude AIへの指示・ルール（プロジェクトルート）
 
 ### 📏 標準・規約
-- [📚 ドキュメント管理標準規約](document_management_standards.md) - **汎用的なドキュメント管理ルール（他プロジェクト配布可能）**
+- [ドキュメント管理標準規約](document_management_standards.md) - 汎用的なドキュメント管理ルール（他プロジェクト配布可能）
+- [設計文書標準規約](design/design_document_standards.md) - 設計書作成の標準規約・テンプレート
+- [コメント記載標準ガイド](design/COMMENT_STYLE_GUIDE.md) - Pythonコードコメント規約
 
 ## 🔄 文書管理
 
@@ -62,4 +72,4 @@
 技術的な質問や文書の更新については、開発チームまでお問い合わせください。
 
 ---
-最終更新: 2025-07-27 | 更新者: 開発チーム
+最終更新: 2025-12-25 | 更新者: 開発チーム
