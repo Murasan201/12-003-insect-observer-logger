@@ -279,10 +279,12 @@ model_path = hf_hub_download(
 
 ### Document Management Standards
 - **MUST follow the standards defined in `docs/document_management_standards.md`**
+- **All documentation MUST be consolidated under the `docs/` directory** - Do NOT place .md files in the project root (except README.md and CLAUDE.md)
 - All documentation MUST be organized under the `docs/` directory structure
 - Use standardized naming conventions for all documents
 - Separate basic design documents from detailed design documents
 - Maintain document index and cross-references
+- **docs/README.md serves as the master index** for all documentation
 
 ### Code Documentation
 - Include module-level docstrings
