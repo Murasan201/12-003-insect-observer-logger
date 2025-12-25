@@ -57,10 +57,10 @@ pip install -r requirements.txt
 cd production/
 
 # デフォルト設定で実行（最適化済みパラメータ）
-python3 test_camera_left_half_realtime.py --auto-focus
+python3 production_camera_left_half_realtime.py --auto-focus
 
 # パラメータを細かく調整する場合
-python3 test_camera_left_half_realtime.py \
+python3 production_camera_left_half_realtime.py \
   --auto-focus \
   --conf 0.3 \
   --exposure -0.5 \
@@ -120,7 +120,7 @@ tail -f logging_9h.log
 tail -10 production/insect_detection_logs/*.csv
 
 # プロセス停止
-pkill -f test_logging_left_half.py
+pkill -f production_logging_left_half.py
 ```
 
 ## Output Files
