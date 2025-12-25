@@ -77,8 +77,9 @@
 ├── utils/                 # ★ Utility modules
 │   ├── data_validator.py
 │   └── file_naming.py
-├── production/                 # ★ Test files and production logging data
-│   └── insect_detection_logs/  # Real-world long-duration logging data
+├── production/                 # ★ Production environment scripts and data
+│   ├── insect_detection_logs/  # Real-world long-duration logging data
+│   └── *.py                    # Production-ready observation scripts
 ├── input_images/          # Input directory (not tracked)
 ├── output_images/         # Output directory (not tracked)
 ├── logs/                  # Log files (not tracked)
@@ -93,15 +94,21 @@
 - **Usage**: For testing and validating YOLOv8 model performance with live camera feed
 - **Detailed Usage**: See `software_design.md` for comprehensive usage instructions and parameters
 
-### Production Test Data
-- **Location**: `production/insect_detection_logs/`
-- **Contents**: Real-world long-duration logging data from production environment
+### Production Environment Directory
+The `production/` directory contains all scripts and data used in the actual production environment (Raspberry Pi with Camera Module 3).
+
+- **Purpose**: Production-ready scripts and real observation data
+- **Scripts**:
+  - `test_logging_left_half.py` - Long-duration logging script (main production script)
+  - `test_camera_left_half_realtime.py` - Real-time detection with left-half area
+  - `visualize_detection_data.py` - Data visualization tool
+- **Data Location**: `production/insect_detection_logs/`
 - **Data Files**:
   - `left_half_detection_log_*.csv` - Long-duration detection logs (8-9 hours each)
   - `insect_detection_log_*.csv` - Detection test logs
   - `*_metadata_*.json` - Session metadata files
   - `*.png` - Visualization graphs
-- **Note**: All production environment test files and logging data are consolidated in the `production/` directory
+- **Note**: This directory is the source of truth for production environment operations
 
 ## Coding Standards
 
