@@ -577,10 +577,29 @@ python train_yolo.py \
 ### 15.4 Production Environment Test Data
 All production environment test files and long-duration logging data are stored in the `production/` directory.
 
-#### 15.4.1 Data Location
+#### 15.4.1 Original Production Files (DO NOT EDIT)
+The following files were actually used in the production environment. **These files MUST NOT be modified** to preserve the integrity of the production record.
+
+| File | Description | Status |
+|------|-------------|--------|
+| `test_logging_left_half.py` | Original long-duration logging script | Read-Only |
+| `test_camera_left_half_realtime.py` | Original real-time detection script | Read-Only |
+| `production/insect_detection_logs/*.csv` | Actual collected observation data | Read-Only |
+| `production/insect_detection_logs/*.json` | Session metadata | Read-Only |
+| `production/insect_detection_logs/*.png` | Generated visualization graphs | Read-Only |
+
+#### 15.4.2 Book Publication Files (Editable)
+The following files are copies intended for book publication. These may be edited for clarity.
+
+| File | Description | Status |
+|------|-------------|--------|
+| `production_logging_left_half.py` | Book publication version | Editable |
+| `production_camera_left_half_realtime.py` | Book publication version | Editable |
+
+#### 15.4.3 Data Location
 - **Directory**: `production/insect_detection_logs/`
 
-#### 15.4.2 Available Data Files
+#### 15.4.4 Available Data Files
 | File Pattern | Description | Duration |
 |--------------|-------------|----------|
 | `left_half_detection_log_*.csv` | Long-duration detection logs | 8-9 hours each |
@@ -588,7 +607,7 @@ All production environment test files and long-duration logging data are stored 
 | `*_metadata_*.json` | Session metadata | - |
 | `*.png` | Visualization graphs | - |
 
-#### 15.4.3 Data Format (CSV)
+#### 15.4.5 Data Format (CSV)
 ```csv
 timestamp,detected,beetle_count,confidence_max,confidence_avg,processing_time_ms,x_min,y_min,x_max,y_max
 ```

@@ -98,16 +98,28 @@
 The `production/` directory contains all scripts and data used in the actual production environment (Raspberry Pi with Camera Module 3).
 
 - **Purpose**: Production-ready scripts and real observation data
-- **Scripts**:
-  - `test_logging_left_half.py` - Long-duration logging script (main production script)
-  - `test_camera_left_half_realtime.py` - Real-time detection with left-half area
-  - `visualize_detection_data.py` - Data visualization tool
-- **Data Location**: `production/insect_detection_logs/`
-- **Data Files**:
-  - `left_half_detection_log_*.csv` - Long-duration detection logs (8-9 hours each)
-  - `insect_detection_log_*.csv` - Detection test logs
-  - `*_metadata_*.json` - Session metadata files
-  - `*.png` - Visualization graphs
+
+#### Original Production Files (DO NOT EDIT)
+The following files were actually used in the production environment and contain real collected data. **These files MUST NOT be modified under any circumstances** to preserve the integrity of the production record.
+
+- **Scripts (Read-Only)**:
+  - `test_logging_left_half.py` - Original long-duration logging script used in production
+  - `test_camera_left_half_realtime.py` - Original real-time detection script used in production
+- **Log Data (Read-Only)**:
+  - `production/insect_detection_logs/left_half_detection_log_*.csv` - Actual observation data
+  - `production/insect_detection_logs/insect_detection_log_*.csv` - Actual detection logs
+  - `production/insect_detection_logs/*_metadata_*.json` - Session metadata
+  - `production/insect_detection_logs/*.png` - Generated visualization graphs
+
+#### Book Publication Files (Editable)
+The following files are copies intended for book publication and documentation. These may be edited for clarity and presentation.
+
+- `production_logging_left_half.py` - Book publication version of logging script
+- `production_camera_left_half_realtime.py` - Book publication version of detection script
+
+#### Utility Scripts
+- `visualize_detection_data.py` - Data visualization tool
+
 - **Note**: This directory is the source of truth for production environment operations
 
 ## Coding Standards
