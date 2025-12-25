@@ -215,3 +215,8 @@ tests/images/
 tests/insect_detection_logs/
 insect_detection_logs/
 test_insect_logs/
+
+# Production log data (actual measurement data - DO NOT EDIT)
+# Exception: Include specific production data files for documentation
+!production/insect_detection_logs/left_half_detection_log_20250904_210012.csv
+!production/insect_detection_logs/left_half_detection_log_20250904_210012_graph.png
