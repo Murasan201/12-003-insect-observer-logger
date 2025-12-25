@@ -3,7 +3,7 @@
 **文書番号**: 12-002-PROC-010
 **プロジェクト名**: 昆虫自動観察＆ログ記録アプリ
 **文書名**: visualize_detection_data.py 処理説明書
-**対象ファイル**: `tests/visualize_detection_data.py`
+**対象ファイル**: `production/visualize_detection_data.py`
 **バージョン**: 1.0
 **作成日**: 2025-12-25
 **作成者**: 開発チーム
@@ -29,8 +29,8 @@
 
 | 項目 | 内容 |
 |------|------|
-| **入力データ** | `tests/insect_detection_logs/left_half_detection_log_20250904_210012.csv` |
-| **出力グラフ** | `tests/insect_detection_logs/left_half_detection_log_20250904_210012_graph.png` |
+| **入力データ** | `production/insect_detection_logs/left_half_detection_log_20250904_210012.csv` |
+| **出力グラフ** | `production/insect_detection_logs/left_half_detection_log_20250904_210012_graph.png` |
 | **計測時間** | 約9時間（21:00〜翌06:00） |
 | **データ件数** | 538レコード |
 
@@ -258,7 +258,7 @@ timestamp,detected,detection_count,confidence_max,confidence_avg,processing_time
 
 ### 基本構文
 ```bash
-python tests/visualize_detection_data.py <csv_file> [options]
+python production/visualize_detection_data.py <csv_file> [options]
 ```
 
 ### 引数
@@ -275,19 +275,19 @@ python tests/visualize_detection_data.py <csv_file> [options]
 
 ```bash
 # 基本的な使用（グラフ表示＋自動保存）
-python tests/visualize_detection_data.py tests/insect_detection_logs/left_half_detection_log_20250904_210012.csv
+python production/visualize_detection_data.py production/insect_detection_logs/left_half_detection_log_20250904_210012.csv
 
 # 出力ファイル名を指定
-python tests/visualize_detection_data.py input.csv -o output_graph.png
+python production/visualize_detection_data.py input.csv -o output_graph.png
 
 # 画面表示なしで保存のみ
-python tests/visualize_detection_data.py input.csv --no-display
+python production/visualize_detection_data.py input.csv --no-display
 
 # 統計情報のみ表示
-python tests/visualize_detection_data.py input.csv --stats-only
+python production/visualize_detection_data.py input.csv --stats-only
 
 # ヒートマップも生成
-python tests/visualize_detection_data.py input.csv --heatmap
+python production/visualize_detection_data.py input.csv --heatmap
 ```
 
 ---
@@ -309,8 +309,8 @@ python tests/visualize_detection_data.py input.csv --heatmap
 | `left_half_detection_log_20250904_210012.csv` | `left_half_detection_log_20250904_210012_graph.png` |
 
 ### データ格納場所
-- **ログファイル**: `tests/insect_detection_logs/`
-- **可視化出力**: `tests/insect_detection_logs/`
+- **ログファイル**: `production/insect_detection_logs/`
+- **可視化出力**: `production/insect_detection_logs/`
 
 ---
 

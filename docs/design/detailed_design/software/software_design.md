@@ -2131,12 +2131,12 @@ SimpleObserver (独立性確保)
 
 ---
 
-## 10. Camera Test Scripts (tests/)
+## 10. Camera Test Scripts (production/)
 
 ### 10.1 テストスクリプト概要
 
 #### 10.1.1 目的と役割
-tests/ディレクトリに配置された専用テストスクリプト群：
+production/ディレクトリに配置された専用テストスクリプト群：
 - Camera Module 3 Wide NoIR専用の検出・ロギング機能
 - 本番システムとは独立したテスト環境
 - オートフォーカス・マニュアルフォーカス対応
@@ -2144,7 +2144,7 @@ tests/ディレクトリに配置された専用テストスクリプト群：
 
 #### 10.1.2 対象スクリプト
 ```
-tests/
+production/
 ├── test_camera_detection_picamera2_fixed.py  # リアルタイム検出テスト
 ├── test_logging_picamera2.py                 # データロギングテスト
 └── images/                                   # 検出画像保存先
@@ -2354,7 +2354,7 @@ error_handling = {
 
 #### 10.6.1 ファイル出力管理
 ```
-tests/
+production/
 ├── insect_detection_logs/           # CSV・JSONログ
 │   ├── insect_detection_log_YYYYMMDD_HHMMSS.csv
 │   └── metadata_YYYYMMDD_HHMMSS.json
@@ -2388,7 +2388,7 @@ analysis = {
 
 #### 10.7.1 本番環境用ファイル
 ```
-tests/ディレクトリ内のファイルは本番環境用:
+production/ディレクトリ内のファイルは本番環境用:
 ├── test_logging_left_half.py         # 本番用長時間ロギングスクリプト
 ├── test_camera_left_half_realtime.py # リアルタイム監視・調整用
 ├── test_camera_detection_picamera2_fixed.py  # 全画面検出用

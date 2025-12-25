@@ -575,10 +575,10 @@ python train_yolo.py \
 - Documentation completeness
 
 ### 15.4 Production Environment Test Data
-All production environment test files and long-duration logging data are stored in the `tests/` directory.
+All production environment test files and long-duration logging data are stored in the `production/` directory.
 
 #### 15.4.1 Data Location
-- **Directory**: `tests/insect_detection_logs/`
+- **Directory**: `production/insect_detection_logs/`
 
 #### 15.4.2 Available Data Files
 | File Pattern | Description | Duration |
