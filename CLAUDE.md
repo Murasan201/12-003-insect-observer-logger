@@ -4,7 +4,7 @@
 
 ### Base Project Information
 - **Base Repository**: https://github.com/Murasan201/insect-detection-training
-- **Current Repository**: https://github.com/Murasan201/12-002-insect-observer-logger
+- **Current Repository**: https://github.com/Murasan201/13-003-insect-observer-logger
 - **Project Evolution**: This project extends the base insect detection system to add activity monitoring capabilities
 
 ### Current Project Scope
@@ -38,7 +38,7 @@
 ## Project Structure
 
 ```
-12-002-insect-observer-logger/
+13-003-insect-observer-logger/
 ├── CLAUDE.md                # Project rules and guidelines (this file)
 ├── LICENSE                  # Project license
 ├── requirements.txt         # Python dependencies
