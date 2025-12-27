@@ -138,9 +138,3 @@ python3 production_camera_left_half_realtime.py --no-display
 - `q`キー: プログラムを終了
 - `s`キー: 現在のフレームを画像として保存
 - `Ctrl+C`: プログラムを強制終了
-
-## 次のステップ
-
-リアルタイム検出が正常に動作することを確認したら、次のガイドに進んでください：
-
-- [長時間ロギング セットアップガイド](setup_logging.md)
