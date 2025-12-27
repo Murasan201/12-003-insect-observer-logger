@@ -9,7 +9,8 @@
 ## 前提条件
 
 - Raspberry Pi 5（Raspberry Pi OS Bookworm）
-- Camera Module 3 または Camera Module 3 Wide
+- Raspberry Pi カメラモジュール V3 NoIR（赤外線対応カメラ）
+- IR LEDリングライト 850nm FRS5CS（夜間照明用）
 - 前章でトレーニングした学習済みモデル（best.pt）
 
 ## セットアップ手順
