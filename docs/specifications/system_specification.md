@@ -127,6 +127,11 @@ insect-detection-training/
 ### 4.1 Core Modules
 
 #### 4.1.1 Training Module (`train_yolo.py`)
+
+> **⚠️ IMPORTANT NOTE**: The `train_yolo.py` in this repository is for **REFERENCE ONLY**.
+> For actual model training, use the authoritative version at:
+> **https://github.com/Murasan201/13-002-insect-detection-training**
+
 **Purpose**: Automated YOLOv8 model training and fine-tuning
 
 **Key Features**:

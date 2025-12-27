@@ -44,7 +44,7 @@
 ├── requirements.txt         # Python dependencies
 ├── detect_insect.py         # Legacy detection script (batch processing)
 ├── detector.py              # New detection module
-├── train_yolo.py           # Training script
+├── train_yolo.py           # Training script (REFERENCE ONLY - see note below)
 ├── book_integration.py     # Book integration utilities
 ├── yolov8_training_colab.ipynb # Training notebook
 ├── test_camera_detection.py  # Camera-based detection test module
@@ -85,6 +85,23 @@
 ├── logs/                  # Log files (not tracked)
 └── weights/               # Model weights (not tracked)
 ```
+
+## Training Script Policy
+
+### Authoritative Training Repository
+- **Authoritative Repository**: https://github.com/Murasan201/13-002-insect-detection-training
+- **Authoritative File**: `train_yolo.py` in the above repository is the **single source of truth** for model training
+
+### Local Training Script (Reference Only)
+- **File**: `train_yolo.py` in this repository
+- **Status**: Reference only - NOT authoritative
+- **Purpose**: Provided for reference and documentation purposes only
+- **WARNING**: Do NOT use this file for actual model training
+
+### Policy
+- For any model training work, always refer to and use the training script from `13-002-insect-detection-training` repository
+- Any updates or modifications to training logic should be made in the authoritative repository only
+- The local `train_yolo.py` may be outdated and should not be considered reliable
 
 ## Test Modules
 
