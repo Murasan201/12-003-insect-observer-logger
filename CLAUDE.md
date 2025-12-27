@@ -412,3 +412,71 @@ model_path = hf_hub_download(
 - Sonnet provides optimal balance of speed and capability for code tasks
 - Only use `opus` for complex architectural decisions requiring deep reasoning
 - Use `haiku` for simple, quick tasks like file searches
+
+## Current Work: Setup Guide Creation
+
+### Overview
+- **Purpose**: Create detailed setup guides for Python programming technical book
+- **Target**: Step-by-step instructions for readers to run the insect detection system
+
+### Setup Guides to Create
+
+#### 1. Detection Test with Trained Model
+- **Target Script**: `production/production_camera_left_half_realtime.py`
+- **Guide Purpose**: Test the trained YOLOv8 model with real-time camera detection
+- **Output Location**: `docs/deployment/` (following document management standards)
+
+#### 2. Long-Duration Logging in Production Environment
+- **Target Script**: `production/production_logging_left_half.py`
+- **Guide Purpose**: Run extended observation sessions with automatic data logging
+- **Output Location**: `docs/deployment/` (following document management standards)
+
+#### 3. Visualization of Logged Data
+- **Target Script**: `production/visualize_detection_data.py`
+- **Guide Purpose**: Generate graphs and visualizations from collected observation data
+- **Output Location**: `docs/deployment/` (following document management standards)
+
+### Guide Requirements
+- Written in Japanese (for technical book audience)
+- Include all prerequisite setup steps
+- Provide complete command examples
+- Include troubleshooting sections
+- Follow document management standards in `docs/document_management_standards.md`
+
+### Installation Instructions Policy
+- **DO NOT use `requirements.txt` for bulk installation**
+- **Install each required library individually with `pip install` commands**
+- **Start from virtual environment creation** (`python -m venv` or equivalent)
+- **List ALL dependencies explicitly** - ensure no library is omitted
+- **Show the complete installation sequence** step by step
+- Example format:
+  ```bash
+  # Create and activate virtual environment
+  python3 -m venv venv
+  source venv/bin/activate
+
+  # Install libraries one by one
+  pip install torch
+  pip install torchvision
+  pip install ultralytics
+  pip install opencv-python
+  # ... continue for all required libraries
+  ```
+- This approach helps readers understand each dependency and troubleshoot installation issues
+
+### Pre-requisite: Model File Setup
+- **Model file (best.pt) placement is required before running any scripts**
+- **In the book context**: Users have already trained their own model in a previous chapter
+  - Guide should explain copying the trained `best.pt` to the required directory
+  - Assume users have their own `best.pt` from the training chapter
+- **For testing/verification**: Download from Hugging Face (exceptional case)
+  - URL: https://huggingface.co/Murasan/beetle-detection-yolov8/tree/main
+  - File: `best.pt`
+- **Target directory**: `weights/` directory in project root
+- Example guide content:
+  ```
+  前章でトレーニングした学習済みモデル（best.pt）を
+  プロジェクトのweightsディレクトリにコピーしてください。
+
+  cp /path/to/your/training/runs/detect/train/weights/best.pt ./weights/
+  ```
