@@ -115,6 +115,11 @@
 The `production/` directory contains all scripts and data used in the actual production environment (Raspberry Pi with Camera Module 3).
 
 - **Purpose**: Production-ready scripts and real observation data
+- **Detailed Documentation**: See `docs/specifications/system_specification.md` Section 15.4 for:
+  - Complete workflow from logging to visualization
+  - CSV/JSON data format specifications
+  - Script function details and command line parameters
+  - File modification policies
 
 #### Original Production Files (DO NOT EDIT)
 The following files were actually used in the production environment and contain real collected data. **These files MUST NOT be modified under any circumstances** to preserve the integrity of the production record.

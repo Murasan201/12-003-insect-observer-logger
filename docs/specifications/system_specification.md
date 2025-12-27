@@ -582,40 +582,198 @@ python train_yolo.py \
 ### 15.4 Production Environment Test Data
 All production environment test files and long-duration logging data are stored in the `production/` directory.
 
-#### 15.4.1 Original Production Files (DO NOT EDIT)
-The following files were actually used in the production environment. **These files MUST NOT be modified** to preserve the integrity of the production record.
+#### 15.4.1 Production Scripts Overview
 
-| File | Description | Status |
-|------|-------------|--------|
-| `test_logging_left_half.py` | Original long-duration logging script | Read-Only |
-| `test_camera_left_half_realtime.py` | Original real-time detection script | Read-Only |
-| `production/insect_detection_logs/*.csv` | Actual collected observation data | Read-Only |
-| `production/insect_detection_logs/*.json` | Session metadata | Read-Only |
-| `production/insect_detection_logs/*.png` | Generated visualization graphs | Read-Only |
+| Script | Purpose | Environment | Status |
+|--------|---------|-------------|--------|
+| `test_logging_left_half.py` | Original logging script used in production | Raspberry Pi | Read-Only |
+| `test_camera_left_half_realtime.py` | Original real-time detection script | Raspberry Pi | Read-Only |
+| `production_logging_left_half.py` | Book publication version (with docstrings) | Any | Editable |
+| `production_camera_left_half_realtime.py` | Book publication version (with docstrings) | Any | Editable |
+| `visualize_detection_data.py` | Data visualization and graph generation | Any | Editable |
 
-#### 15.4.2 Book Publication Files (Editable)
-The following files are copies intended for book publication. These may be edited for clarity.
+#### 15.4.2 Logging to Visualization Workflow
 
-| File | Description | Status |
-|------|-------------|--------|
-| `production_logging_left_half.py` | Book publication version | Editable |
-| `production_camera_left_half_realtime.py` | Book publication version | Editable |
-
-#### 15.4.3 Data Location
-- **Directory**: `production/insect_detection_logs/`
-
-#### 15.4.4 Available Data Files
-| File Pattern | Description | Duration |
-|--------------|-------------|----------|
-| `left_half_detection_log_*.csv` | Long-duration detection logs | 8-9 hours each |
-| `insect_detection_log_*.csv` | Detection test logs | Various |
-| `*_metadata_*.json` | Session metadata | - |
-| `*.png` | Visualization graphs | - |
-
-#### 15.4.5 Data Format (CSV)
-```csv
-timestamp,detected,beetle_count,confidence_max,confidence_avg,processing_time_ms,x_min,y_min,x_max,y_max
 ```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    Production Observation Workflow                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  [1] Observation & Logging
+  ┌─────────────────────────────────────┐
+  │  production_logging_left_half.py    │
+  │  (or test_logging_left_half.py)     │
+  │                                     │
+  │  • Camera capture (60s interval)    │
+  │  • YOLOv8 detection                 │
+  │  • CSV logging                      │
+  │  • Metadata JSON output             │
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼
+  [2] Output Files
+  ┌─────────────────────────────────────┐
+  │  insect_detection_logs/             │
+  │                                     │
+  │  ├── left_half_detection_log_*.csv  │  ← Detection data
+  │  ├── left_half_metadata_*.json      │  ← Session parameters
+  │  └── images/ (optional)             │  ← Detection images
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼
+  [3] Visualization
+  ┌─────────────────────────────────────┐
+  │  visualize_detection_data.py        │
+  │                                     │
+  │  • Load CSV data                    │
+  │  • Generate time-series plot        │
+  │  • Generate cumulative plot         │
+  │  • Generate hourly activity chart   │
+  │  • Print statistics                 │
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼
+  [4] Visualization Output
+  ┌─────────────────────────────────────┐
+  │  *_graph.png                        │
+  │                                     │
+  │  • Time-series detection plot       │
+  │  • Cumulative detection count       │
+  │  • Hourly activity bar chart        │
+  │    (21:00-06:00 optimized)          │
+  └─────────────────────────────────────┘
+```
+
+#### 15.4.3 Production Script Details
+
+##### 15.4.3.1 Logging Script (`production_logging_left_half.py`)
+
+**Purpose**: Long-duration insect observation with automated logging
+
+**Key Functions**:
+| Function | Description |
+|----------|-------------|
+| `setup_logging()` | Initialize CSV and metadata files |
+| `save_detection_to_csv()` | Write detection record to CSV |
+| `test_logging_left_half()` | Main observation loop |
+| `distance_to_lens_position()` | Convert focus distance to lens parameter |
+
+**Command Line Parameters**:
+```bash
+python production_logging_left_half.py \
+    --model ../weights/best.pt \      # YOLOv8 model path
+    --conf 0.4 \                       # Confidence threshold
+    --interval 60 \                    # Observation interval (seconds)
+    --duration 32400 \                 # Total duration (9 hours)
+    --auto-focus \                     # Enable auto focus
+    --save-images                      # Save detection images
+```
+
+##### 15.4.3.2 Visualization Script (`visualize_detection_data.py`)
+
+**Purpose**: Generate graphs and statistics from CSV log data
+
+**Key Functions**:
+| Function | Description |
+|----------|-------------|
+| `load_csv_data()` | Load CSV file into DataFrame |
+| `process_detection_data()` | Preprocess data (type conversion, NaN handling) |
+| `create_detection_plot()` | Generate 3-subplot visualization |
+| `create_activity_heatmap()` | Generate multi-day heatmap (optional) |
+| `print_statistics()` | Output statistical summary |
+
+**Command Line Usage**:
+```bash
+# Basic visualization
+python visualize_detection_data.py left_half_detection_log_*.csv
+
+# With custom output path
+python visualize_detection_data.py data.csv -o output.png
+
+# Statistics only (no graph)
+python visualize_detection_data.py data.csv --stats-only
+
+# Include heatmap (for multi-day data)
+python visualize_detection_data.py data.csv --heatmap
+```
+
+#### 15.4.4 CSV Data Format Specification
+
+**File**: `left_half_detection_log_YYYYMMDD_HHMMSS.csv`
+
+| Column | Type | Description | Example |
+|--------|------|-------------|---------|
+| timestamp | ISO 8601 | Observation timestamp | `2025-09-04T21:39:36.674064` |
+| observation_number | int | Sequential observation count | `40` |
+| detection_count | int | Number of detections | `1` |
+| has_detection | bool | Detection flag | `True` |
+| class_names | string | Detected class (`;` separated) | `beetle` |
+| confidence_values | string | Confidence scores | `0.492` |
+| bbox_coordinates | string | Bounding box `(x1,y1,x2,y2)` | `(103,586,1108,1296)` |
+| center_x | float | Detection center X | `605.6` |
+| center_y | float | Detection center Y | `941.0` |
+| bbox_width | float | Bounding box width | `1005.0` |
+| bbox_height | float | Bounding box height | `710.0` |
+| area | float | Bounding box area (pixels²) | `713521.1` |
+| detection_area | string | Monitored region | `left_half` |
+| processing_time_ms | float | Processing time (ms) | `453.4` |
+| image_saved | bool | Image save flag | `True` |
+| image_filename | string | Saved image filename | `left_half_detection_*.jpg` |
+
+#### 15.4.5 Metadata Format Specification
+
+**File**: `left_half_metadata_YYYYMMDD_HHMMSS.json`
+
+```json
+{
+  "start_time": "2025-09-04T21:00:12.074679",
+  "detection_area": "left_half",
+  "area_description": "Only left 50% of camera view is monitored",
+  "log_file": "/path/to/left_half_detection_log_*.csv",
+  "system_info": {
+    "camera": "Camera Module 3 Wide NoIR",
+    "platform": "Raspberry Pi"
+  },
+  "focus_mode": "auto",
+  "focus_distance_cm": null,
+  "model_path": "../weights/best.pt",
+  "confidence_threshold": 0.4,
+  "resolution": "2304x1296",
+  "detection_width": 1152,
+  "interval_seconds": 60,
+  "duration_seconds": 32400,
+  "save_images": true
+}
+```
+
+#### 15.4.6 Actual Production Data
+
+The following files are **git-tracked production data** used as reference:
+
+| File | Description | Records | Duration |
+|------|-------------|---------|----------|
+| `left_half_detection_log_20250904_210012.csv` | 9-hour observation data | 538 | 21:00-06:00 |
+| `left_half_detection_log_20250904_210012_graph.png` | Visualization graph | - | - |
+| `left_half_metadata_20250904_210012.json` | Production parameters | - | - |
+
+**Production Execution Command (Estimated)**:
+```bash
+python test_logging_left_half.py \
+    --conf 0.4 \
+    --interval 60 \
+    --duration 32400 \
+    --auto-focus \
+    --save-images
+```
+
+#### 15.4.7 File Modification Policy
+
+| Category | Files | Policy |
+|----------|-------|--------|
+| **Original Scripts** | `test_logging_left_half.py`, `test_camera_left_half_realtime.py` | **DO NOT EDIT** - Preserve production record |
+| **Original Data** | `*.csv`, `*.json`, `*.png` in `insect_detection_logs/` | **DO NOT EDIT** - Preserve data integrity |
+| **Book Publication** | `production_logging_left_half.py`, `production_camera_left_half_realtime.py` | Editable for documentation |
+| **Utilities** | `visualize_detection_data.py` | Editable |
 
 ---
 
