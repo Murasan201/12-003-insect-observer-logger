@@ -1,4 +1,4 @@
-# 12-002 Insect Observer & Logger
+# 12-003 Insect Observer & Logger
 
 昆虫（カブトムシ）の活動を自動検出・記録するシステム
 
@@ -33,8 +33,8 @@ Camera Module 3 Wide NoIRとYOLOv8を使用した昆虫観察システム。赤�
 
 ```bash
 # Clone repository
-git clone https://github.com/Murasan201/12-002-insect-observer-logger.git
-cd 12-002-insect-observer-logger
+git clone https://github.com/Murasan201/13-003-insect-observer-logger.git
+cd 13-003-insect-observer-logger
 
 # Create virtual environment
 python3 -m venv venv
@@ -238,7 +238,7 @@ libcamera-hello --list-cameras
 詳細な技術仕様は以下を参照:
 
 - [ソフトウェア設計書](docs/design/detailed_design/software/software_design.md)
-- [要件定義書](docs/requirements/12-002_昆虫自動観察＆ログ記録アプリ_要件定義書.md)
+- [要件定義書](docs/requirements/12-003_昆虫自動観察＆ログ記録アプリ_要件定義書.md)
 - [トラブルシューティングガイド](docs/troubleshooting.md)
 
 ## License
@@ -248,5 +248,5 @@ MIT License (コードベース)
 
 ## Contact
 
-- GitHub: https://github.com/Murasan201/12-002-insect-observer-logger
-- Issues: https://github.com/Murasan201/12-002-insect-observer-logger/issues
+- GitHub: https://github.com/Murasan201/13-003-insect-observer-logger
+- Issues: https://github.com/Murasan201/13-003-insect-observer-logger/issues

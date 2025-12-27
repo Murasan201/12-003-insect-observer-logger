@@ -14,7 +14,7 @@
 
 ### Requirements Specification
 - **Base requirements defined in**: `docs/requirements/insect_detection_application_test_project_requirements_spec.md`
-- **Current project requirements defined in**: `docs/requirements/12-002_昆虫自動観察＆ログ記録アプリ_要件定義書.md`
+- **Current project requirements defined in**: `docs/requirements/12-003_昆虫自動観察＆ログ記録アプリ_要件定義書.md`
 - **MUST review both documents before starting any work**
 - Base document contains detailed functional and non-functional requirements for the detection system
 - Current document contains specific requirements for insect activity monitoring and logging application

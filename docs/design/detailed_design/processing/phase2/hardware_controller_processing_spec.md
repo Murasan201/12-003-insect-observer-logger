@@ -1,6 +1,6 @@
 # hardware_controller.py 処理説明書
 
-**文書番号**: 12-002-PROC-101  
+**文書番号**: 12-003-PROC-101  
 **プロジェクト名**: 昆虫自動観察＆ログ記録アプリ  
 **文書名**: hardware_controller.py 処理説明書  
 **対象ファイル**: `hardware_controller.py`  

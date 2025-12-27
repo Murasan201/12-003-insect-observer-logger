@@ -1,6 +1,6 @@
 # config_manager.py 処理説明書
 
-**文書番号**: 12-002-PROC-004  
+**文書番号**: 12-003-PROC-004  
 **プロジェクト名**: 昆虫自動観察＆ログ記録アプリ  
 **文書名**: config_manager.py 処理説明書  
 **対象ファイル**: `config/config_manager.py`  

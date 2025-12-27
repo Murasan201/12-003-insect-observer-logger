@@ -1,6 +1,6 @@
 # visualize_detection_data.py 処理説明書
 
-**文書番号**: 12-002-PROC-010
+**文書番号**: 12-003-PROC-010
 **プロジェクト名**: 昆虫自動観察＆ログ記録アプリ
 **文書名**: visualize_detection_data.py 処理説明書
 **対象ファイル**: `production/visualize_detection_data.py`
@@ -343,5 +343,5 @@ import numpy as np
 
 ---
 
-*文書番号: 12-002-PROC-010*
+*文書番号: 12-003-PROC-010*
 *最終更新日: 2025-12-25*

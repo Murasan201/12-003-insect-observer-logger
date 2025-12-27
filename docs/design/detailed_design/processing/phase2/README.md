@@ -21,19 +21,19 @@ Phase 2では以下の3つのモジュールの処理説明書を作成してい
 ### 1. 統合ハードウェア制御
 
 #### 1.1 hardware_controller.py
-- **文書番号**: 12-002-PROC-101
+- **文書番号**: 12-003-PROC-101
 - **ファイル**: [hardware_controller_processing_spec.md](hardware_controller_processing_spec.md)
 - **概要**: カメラ・IR LED・GPIO の統合制御とハードウェア状態監視
 
 ### 2. 専用デバイス制御
 
 #### 2.1 camera_controller.py
-- **文書番号**: 12-002-PROC-102
+- **文書番号**: 12-003-PROC-102
 - **ファイル**: [camera_controller_processing_spec.md](camera_controller_processing_spec.md)
 - **概要**: Raspberry Pi Camera V3 NoIR専用の高度なカメラ制御・赤外線撮影対応
 
 #### 2.2 led_controller.py
-- **文書番号**: 12-002-PROC-103
+- **文書番号**: 12-003-PROC-103
 - **ファイル**: [led_controller_processing_spec.md](led_controller_processing_spec.md)
 - **概要**: IR LED Ring Light (FRS5CS 850nm) のPWM調光制御・温度監視・自動調光
 

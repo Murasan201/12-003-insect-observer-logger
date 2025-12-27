@@ -21,21 +21,21 @@ Phase 3では以下の3つのモジュールの処理説明書を作成してい
 ### 1. 昆虫検出処理
 
 #### 1.1 insect_detector.py
-- **文書番号**: 12-002-PROC-201
+- **文書番号**: 12-003-PROC-201
 - **ファイル**: [insect_detector_processing_spec.md](insect_detector_processing_spec.md)
 - **概要**: YOLOv8を使用した昆虫検出処理の実行・カメラ制御連携・バッチ処理対応
 
 ### 2. 検出結果処理
 
 #### 2.1 detection_processor.py
-- **文書番号**: 12-002-PROC-202
+- **文書番号**: 12-003-PROC-202
 - **ファイル**: [detection_processor_processing_spec.md](detection_processor_processing_spec.md)
 - **概要**: 検出結果の後処理・フィルタリング・品質評価・統計分析・CSV出力
 
 ### 3. モデル管理
 
 #### 3.1 model_manager.py
-- **文書番号**: 12-002-PROC-203
+- **文書番号**: 12-003-PROC-203
 - **ファイル**: [model_manager_processing_spec.md](model_manager_processing_spec.md)
 - **概要**: YOLOv8モデルの管理・Hugging Faceダウンロード・検証・変換・最適化
 

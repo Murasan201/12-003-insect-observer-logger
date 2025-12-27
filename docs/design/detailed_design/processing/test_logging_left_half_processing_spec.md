@@ -1,6 +1,6 @@
 # test_logging_left_half.py 処理説明書
 
-**文書番号**: 12-002-PROC-011
+**文書番号**: 12-003-PROC-011
 **プロジェクト名**: 昆虫自動観察＆ログ記録アプリ
 **文書名**: test_logging_left_half.py 処理説明書
 **対象ファイル**: `production/test_logging_left_half.py`
@@ -249,5 +249,5 @@ tail -10 production/insect_detection_logs/*.csv
 
 ---
 
-*文書番号: 12-002-PROC-011*
+*文書番号: 12-003-PROC-011*
 *最終更新日: 2025-12-25*

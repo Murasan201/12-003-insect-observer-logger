@@ -1,7 +1,7 @@
 {
   "test_datetime": "2025-07-28 16:59:16",
   "python_version": "3.10.12",
-  "working_directory": "/home/win/work/projetct/kodansya/12-002-insect-observer-logger",
+  "working_directory": "/home/win/work/projetct/kodansya/13-003-insect-observer-logger",
   "tests": {
     "basic_cli": {
       "description": "基本CLI機能",
